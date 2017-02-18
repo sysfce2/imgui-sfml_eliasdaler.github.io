@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Re:creation dev log. July - November 2016 &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Re:creation dev log. July - November 2016</h1>
+    <span class="post-meta"><time datetime="2016-11-27T21:39:58+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Nov 27, 2016</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Re%3Acreation" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Re:creation</a></li>
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#Dev+log" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Dev log</a></li>
+  
+</ul>
+  </header>
+  <hr>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>The last five months were really important for the game. It finally feels like I can work on the game itself now, not just the engine and basic systems which will let me implement different stuff in the game. It’s not just abstract stuff, stuff which I do “just in case”. No, I try to be pragmatic and implement things which are needed for the game and which will let me create stuff without much restrictions.</p>
+
+<p>I’m very glad to say this, but I feel like the core engine is almost done. There are still some important things which I’ll have to implement, but it still feels like I’m finally happy with the design I have. Mostly, it’s because I’ve removed lots of stuff and find lots of ways to minimize my code which in the end gives me ability to implement new stuff easier and makes the whole thing easier to expand, modify and debug.</p>
+
+<p>I’m finally ready to do a lot of prototyping. I’ve already done a lot of stuff about the game, but I still have the feeling that it’s just the beginning of the “real” development! And it feels great, because I feel like I’m in total control of every aspect of the game. There are no restrictions, no boundaries. Let’s see how it goes.</p>
+
+<p>One more small thing: I’ve got a new laptop! I’ve had it for two weeks now. It feels really great. I’m able to do stuff a lot quicker and without frustration (having a great mood is important to be productive)! I’ve had my previous laptop for six years and it was slowing me down a lot. It was constantly overheating, everything was running poorly, compilation took a long time, etc… And recently I’ve realized how much it hurt my working process. There were lots of distractions, because even small change could take 1-2 minutes of recompilation. This means, that fast iteration was impossible. This also means that I constantly lost flow and couldn’t debug quickly. Hours of slow progress made it all exhausting. Won’t happen anymore!</p>
+
+<p>Okay, let’s begin!</p>
+
+<!--more-->
+<p><a class="anchor" id="read-more"></a></p>
+
+<h1 id="art">Art</h1>
+<p>I haven’t done much art in the last months and most of the stuff I’ve done is still not finished, so I’ll show them a bit later. There’s a next graphics improvement coming and I’m glad that I didn’t have a lot of graphics done, because I’d have to redraw tons of stuff. Let’s hope it will be the last huge change!</p>
+
+<p>I’ve improved Renatus’ design and walking animation, it’s nice to see how much my art improved over time:
+<img src="http://i.imgur.com/bCdBa80.gif" alt="Re:creation walk cycle improvements" style="display:block; margin: 0 auto;width:512px;height: auto;" />
+I’ve also made some very small, but cool things…
+Unsynched idle animations make everything look more alive!
+<img src="http://i.imgur.com/36HyuEh.gif" alt="Unsynched animations" style="display:block; margin: 0 auto;" />
+Cat doesn’t “talk” during “translation”
+<img src="http://i.imgur.com/dKRkCKn.gif" alt="Cat talking" style="display:block; margin: 0 auto;" /></p>
+
+<h1 id="multiple-tilemaps-in-one-level">Multiple tilemaps in one level</h1>
+
+<p>Previously the level was limited to one tile map. That meant that if I wanted to make indoor places I either had to switch to another level (which isn’t fast!) or place the indoor area somewhere far away and teleport the player there. The second approach is highly used in 3d games, but I’ve realized that it wasn’t as good in 2d tile-based games because it’s harder to move tiles and you have to account for empty areas in your tilemap which are created by placing some area far away.</p>
+
+<p>Eventually, I’ve made a decision to make levels which support multiple tilemaps. It wasn’t easy to make, because lots of assumptions were made about Level having only one tilemap, but fortunately it wasn’t that bad, so I’ve done it fairly quickly. Now I can easily switch tilemaps during the fade in / fade out effect during scene transitions.</p>
+
+<h1 id="input">Input</h1>
+<p>Previously I’ve used polling for input, but realized that events are a lot more efficient and let me easily move all the input in Lua! One more part of game logic moved from C++ to Lua again! Great.</p>
+
+<p>I’ve also made much better system for input in general. Now all keys can be mapped to “actions” or “axes” (plural of “axis”, not “axe”!). “Actions” and “Axes” can be binded to C++ or Lua callback. This makes low-level input decoupled from game input logic in a nice way.</p>
+
+<p>One advantage of event based scripting is being able to set only one callback for particular action at given time. For example, during dialogues the “Primary Action” input action will be assigned to “Skip dialogue”, not “Attack/Use Primary Item”, so I don’t have to worry that somehow the player will be able to attack during dialogues.</p>
+
+<p>My input manager now also has complete gamepad support (sticks and triggers are also supported and it’s possible to connect gamepad in-game!). Event based input will later make it easy to implement replay system which will just send input events at needed times, simulating real player pressing buttons. Easy to implement and very useful for debugging!</p>
+
+<h1 id="moved-entity-states-from-c-to-lua">Moved Entity states from C++ to Lua</h1>
+
+<p>This is a thing that I wanted to make for a long time. Basically, most of the game logic lives in entity states. State like <code class="highlighter-rouge">MoveState</code>, <code class="highlighter-rouge">AttackState</code>, etc. Previously they were hard-coded in C++ which made them hard to modify and control with Lua. Another problem was that the more stuff I added to Lua, the harder it became for me to access stuff one Lua side.</p>
+
+<p>For example, once I’ve implemented Action Lists in Lua, I’ve realized that some entity states can highly benefit from using them. But this meant that a lot of calls between Lua and C++ would happen.</p>
+
+<p>Rewriting entity states was extremely easy and I’ve discovered and fixed a lot of bugs along the way. I’ve also made entity states a lot more reusable, so that different entities can use the same code while adding bits that are different. For example, the same AttackState is used by player character, enemies with melee weapons and archers!</p>
+
+<p>Action lists are used to make code much easier to follow, basically the lists goes like this:</p>
+<ul>
+  <li>Pre-attack animation (starting to swing a sword / aiming the arrow)</li>
+  <li>Attack animation (continuing to swing a sword / shooting the arrow)
+During this step the damage is created during some frame. For melee attackers it’s defined in their AttackComponent, for archer the damage is “arrow” entity which is created on the first frame of “shoot” animation</li>
+  <li>Post attack animation</li>
+</ul>
+
+<p>I’ve also implemented multiple state machines for entities. Most of the time the entity will have only one state machine which will describe it’s “main” state, but sometimes it’s useful to have another state machine which will, for example, describe it’s health state, so that if the entity has low health, it will play different “idle” animation.</p>
+
+<h1 id="private-messages-in-event-system">Private messages in event system</h1>
+
+<p>I’ve effectively used event system with global queue for quite some time, but then I’ve realized that it’s not efficient for some events to be implemented that way. One example of this is collision callbacks. When two entities collide, each entity’s onCollide function needs to be called with some additional info about which entity collided with it and maybe how it happened. In global queue each entity interested in collision event would receive this event and it would have to check if the collision happened with it or not. Of course that’s a huge waste of time, so that’s why I’ve made “private message” system which let’s entities specify sender and receiver for each event and then EventManager just sends this event to receiver object.</p>
+
+<h1 id="improved-dialogues-a-lot">Improved dialogues a lot</h1>
+
+<p>Dialogue system got some needed improvements! One such improvement is ability to insert delays and even function calls between words! It looks like this in a text:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="nl">"SOME_TEXT_TAG"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="s2">"Hello...[DELAY 500][X] I've been waiting for you"</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p><code class="highlighter-rouge">[DELAY 500]</code> creates a 500 ms delay. <code class="highlighter-rouge">[X]</code> indicates that the function with tag “X” will be called. In scripts, it looks something like this:</p>
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">DialogueAction</span> <span class="p">{</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"SOME_TEXT_TAG"</span><span class="p">},</span>
+    <span class="n">functions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">talker</span><span class="p">)</span>
+            <span class="n">talker</span><span class="p">:</span><span class="n">setAnimation</span><span class="p">(</span><span class="s2">"smile"</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>I later plan to add shaking or wave effects to text for better expression of characters’ emotions.</p>
+
+<h1 id="dev-tools">Dev tools</h1>
+
+<p>I’ve made some useful in-game dev tools with ImGui. One such tool is in-game console which lets me execute Lua easily. Here’s a little demo of it in action!
+<img src="http://i.imgur.com/DdKtJqU.gif" alt="Console demo" style="display:block; margin: 0 auto;" /></p>
+
+<p>I’ve also made a tool for controlling time. Now it’s possible to slow down and pause the game at any moment. The game doesn’t slow down or stop, I just change deltaTime, so I can easily debug everything in Visual Studio.
+<img src="http://i.imgur.com/R2F7YLf.gif" alt="Time dev tools" style="display:block; margin: 0 auto;" /></p>
+
+<h1 id="removed-tons-of-components">Removed tons of components</h1>
+<p>I’ve also removed a lot of components which I found redundant and easily made with other components which have much larger role. Here’s what I’ve removed.</p>
+
+<h2 id="direction-component">Direction Component</h2>
+<p>Direction component stored just one thing: entity’s direction. But that meant that to access entity’s direction I had to get DirectionComponent and then get the direction. Getting component from entity isn’t very fast (because it involves a <code class="highlighter-rouge">dynamic_cast</code> and <code class="highlighter-rouge">std::unordered_map</code> search) so I’ve just started to store entity’s direction in Entity class. Yes, some entities won’t have a direction (invisible entities or trees, for example), but I just assign <code class="highlighter-rouge">Direction::None</code> to them. Storing 1 additional byte inside of Entity isn’t a big deal!</p>
+
+<h2 id="trigger-component">Trigger Component</h2>
+
+<p>I’ve also removed trigger component. Previously it was used for triggers and made possible to realize the following callbacks: <code class="highlighter-rouge">onEnter</code>, <code class="highlighter-rouge">onStay</code> and <code class="highlighter-rouge">onExit</code>. But how did I check when to call them? I checked if trigger collides with potentially interesting entities or not… but then I’ve realized: why not just use <code class="highlighter-rouge">CollisionComponent</code> for that and make a simple entity state machine which will track entities state which are: Idle or Triggered. OnEnter is called on transition from Idle to Triggered state, onStay is called when Triggered state is active and onExit is called during transition from Triggered to Idle state. <code class="highlighter-rouge">CollisionEnter</code> and <code class="highlighter-rouge">CollisionExit</code> events trigger state transitions. This means that TriggerComponent wasn’t needed anymore and I got rid of it with a huge satisfaction.</p>
+
+<p>I’ve also made “directed” triggers which are called only when the player faces the specific direction, for example cafe has a trigger which lets player exit it when his direction is “Down”.</p>
+
+<h2 id="interaction-component">Interaction Component</h2>
+
+<p>Interaction Component was used for player-entity interactions, for example speaking with NPCs. When the player enters the “interaction area”, the input changes and pressing a specific button will start dialogue. Hmmm… seems familiar, isn’t it? Yes, this component isn’t needed too, because I can just make a trigger which will just change the input during onEnter/onExit function calls. Using it with “directed” triggers makes it perfect, because now it’s easy to make interaction possible only when the player faces the entity. (Previously it was possible to talk with NPCs while turning away from them, not cool!)</p>
+
+<h1 id="remade-damage-system">Remade damage system</h1>
+
+<p>Previously when player attacked, the “damage” entity was created and then destroyed. If something collided with it, the damage was registered. But on one random forum I’ve found much better solution: just have “damage” rect with melee attackers all the time and activate it only during attack. Simple and much more efficient!</p>
+
+<h1 id="sat-separating-axis-theorem-collision">SAT (Separating Axis Theorem) collision</h1>
+
+<p>After a lot of trying and failing, I’ve implemented SAT collision detection and response which will be used for some complex level geometry.
+<img src="http://i.imgur.com/eEg9lEp.gif" alt="SAT" style="display:block; margin: 0 auto;" />
+I’ve put some source code of <i class="fa fa-github" aria-hidden="true"></i><a href="https://gist.github.com/eliasdaler/502b54fcf1b515bcc50360ce874e81bc">here</a>, by the way, feel free to use it for your projects.</p>
+
+<h1 id="refactoring">Refactoring</h1>
+<p>I’ve also done <strong>a lot</strong> of refactoring. I’m mostly satisfied with most of my codebase, but there was some bad stuff that I needed to fix once and for all!
+Mostly, I’ve been fixing pretty typical problems: unnecessary dependencies, some code duplication, problems with ownerships, etc. Not too much to say about that!
+But the good thing about refactoring is that it just made my codebase a lot shorter. At some point it’s not a refactoring anymore, it’s restructuring, implementing better code, moving some stuff to Lua, etc.</p>
+
+<p><strong>C++</strong>: -4345 lines of code</p>
+
+<p><strong>Lua</strong>: +540 lines of code</p>
+
+<p><strong>Total</strong>: -3814 lines of code</p>
+
+<p>This makes me extremely happy, because shorter and cleaner code is much easier to manage and improve. Writing negative code feels great!</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>The last few months were very important and productive! While there wasn’t a huge progress about the game itself, the engine is almost done, I’m very happy with the code and engine structure now. The next few months will be spent prototyping and making “vertical slice” of the game and I hope I’ll be able to make game truly fun and enjoyable. See ya!</p>
+
+    <hr />
+    <p>Follow me on twitter <a href="https://twitter.com/EliasDaler">@EliasDaler</a> to not miss the new stuff!</p>
+  </div>
+
+</article>
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//eliasdaler-github-io.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>

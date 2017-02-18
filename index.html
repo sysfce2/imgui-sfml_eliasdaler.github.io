@@ -18,26 +18,15 @@
   <link rel="stylesheet" href="/public/css/poole.css">
   <link rel="stylesheet" href="/public/css/syntax.css">
   <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
-  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
 
   <!-- Icons -->
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/public/apple-touch-icon-precomposed.png">
   <link rel="shortcut icon" href="/public/favicon.ico">
 
   <!-- RSS -->
   <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
-  
-  <!-- Google Analytics Tracking code -->
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-42056921-2', 'auto');
-    ga('send', 'pageview');
-</script>
 </head>
 
   <body>
@@ -50,20 +39,21 @@
 <div class="sidebar" id="sidebar">
 
   <div class="sidebar-item">
-    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>This is my new blog that I'm currently building.
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
 </h4>
   </div>
 
   <nav class="sidebar-nav">
     <a class="sidebar-nav-item active" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
-    <a class="sidebar-nav-item" href="/re-creation"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
-    <a class="sidebar-nav-item" href="/about"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
-    <a class="sidebar-nav-item" href="/tags"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
   </nav>
 
   <div class="sidebar-item">
     <h5 style="color:#FFFFFF;">
-      &copy; 2017. Elias Daler. All rights reserved.
+      &copy; 2021. Elias Daler. All rights reserved.
     </h5>
   </div>
 </div>
@@ -88,7 +78,282 @@
 
   
       <h1>
-        <a class="post-title" href="/game-object-references">Making and storing references to game objects (entities) in C++ and Lua</a>
+        <a class="post-title" href="/using-cmake/">Using CMake and managing dependencies</a>
+      </h1>
+      <span class="post-meta"><time datetime="2021-05-24T00:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>May 24, 2021</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#CMake" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> CMake</a></li>
+  
+</ul>
+      <hr>
+    <article><p>Building C++ projects and managing dependencies is hard. CMake’s FetchContent makes it much more manageable and easy to do.</p>
+
+<p>We’ll go step by step and create a simple project which will have SFML, Dear ImGui and ImGui-SFML as its dependencies. The project will clone these dependencies’ source code from Github and build them. You won’t need to use prebuilt libraries ever again.</p>
+
+<p>I’ll try to explain everything as I go on down to a “basic” things. It’s good to understand everything you do and be able to do it from scratch without any guides. This article will also be a good starting point if you’ve never used CMake before.</p>
+
+<p>If you just want to learn how to manage dependencies with CMake with <code class="highlighter-rouge">FetchContent</code>, you can just jump straight to <a href="#adding-sfml-as-a-dependency">Adding SFML as a dependency</a> section.</p>
+
+<p>The source code of the project in the article can be found <a href="https://github.com/eliasdaler/cmake-fetchcontent-tutorial-code">here</a>.</p>
+
+</article>
+    <p><a href="/using-cmake/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/using-cmake/#disqus_thread" class="disqus-comment-count" data-disqus-url="/using-cmake/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/porting-to-sdl/">Porting my engine from SFML to SDL</a>
+      </h1>
+      <span class="post-meta"><time datetime="2020-05-17T00:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>May 17, 2020</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#C" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C</a></li>
+  
+    <li><a href="/tags#SFML" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> SFML</a></li>
+  
+    <li><a href="/tags#SDL" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> SDL</a></li>
+  
+    <li><a href="/tags#game+dev" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> game dev</a></li>
+  
+    <li><a href="/tags#Tomb+Painter" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Tomb Painter</a></li>
+  
+    <li><a href="/tags#dev+log" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> dev log</a></li>
+  
+</ul>
+      <hr>
+    <article><p>Recently I’ve ported my game/engine from SFML to SDL. This was not an easy task
+and took me two weeks of hard work (3-4 hours on weekdays, 6-8 hours on
+weekends). This article will explain why I did it and which challenges I’ve
+faced in the process.</p>
+
+<p class="img-desc"><img src="/assets/sdl_port_article/title_image.png" alt="My first game" style="display:block; margin: 0 auto; width: 720px" />
+My first SFML project</p>
+
+</article>
+    <p><a href="/porting-to-sdl/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/porting-to-sdl/#disqus_thread" class="disqus-comment-count" data-disqus-url="/porting-to-sdl/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/luavela/">LuaVela - the LuaJIT fork I've worked on</a>
+      </h1>
+      <span class="post-meta"><time datetime="2019-10-15T00:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Oct 15, 2019</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#C" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C</a></li>
+  
+    <li><a href="/tags#JIT" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> JIT</a></li>
+  
+    <li><a href="/tags#Compilers" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Compilers</a></li>
+  
+</ul>
+      <hr>
+    <article><p>Recently, IPONWEB open sourced its fork of LuaJIT called
+<a href="https://github.com/iponweb/luavela">LuaVela</a>. The original announcement post
+can be found <a href="http://lua-users.org/lists/lua-l/2019-08/msg00041.html">here</a>
+where a lot of details about it can be found. For those who don’t know - my real
+name is Ilya Daylidyonok, and I’m mentioned in the announcement!</p>
+
+<p>I’ve worked on LuaVela for the last 7 months and now I want to tell about my
+experience.</p>
+
+</article>
+    <p><a href="/luavela/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/luavela/#disqus_thread" class="disqus-comment-count" data-disqus-url="/luavela/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/tomb-painter-first-dev-log/">Tomb Painter. The first dev log (2017-2018)</a>
+      </h1>
+      <span class="post-meta"><time datetime="2019-01-06T23:22:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jan 6, 2019</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Tomb+Painter" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Tomb Painter</a></li>
+  
+    <li><a href="/tags#dev+log" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> dev log</a></li>
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#game+dev" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> game dev</a></li>
+  
+</ul>
+      <hr>
+    <article>
+<hr />
+
+<p>Hello, everyone. Today I’m ready to officially announce and talk about the game I’m currently working on!</p>
+
+<p><img src="/assets/tomb_painter_first_dev_log/tomb_painter_logo.png" alt="Tomb Painter logo" style="display:block; margin: 0 auto" /></p>
+
+<p>It’s called Tomb Painter and I’ve been working on it since August of 2017.</p>
+
+<p><img src="/assets/tomb_painter_first_dev_log/characters.png" alt="Tomb Painter characters" style="display:block; margin: 0 auto; width: 447px" /></p>
+
+<p>In the game, a painter arrives on mysterious island, which has strange things going on with it. Blob-shaped monsters made of paint start to appear from an ancient tomb. The only way to stop this is to paint beautiful patterns which were washed away by a flood that happened some time ago.</p>
+
+<p>The main mechanic is that you can draw on floors and paint stuff by hitting it with your brush. By painting on the floor, you solve different puzzles.
+<img src="/assets/tomb_painter_first_dev_log/gameplay.gif" alt="Tomb Painter gameplay" style="display:block; margin: 0 auto; width: 512px" /></p>
+
+</article>
+    <p><a href="/tomb-painter-first-dev-log/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/tomb-painter-first-dev-log/#disqus_thread" class="disqus-comment-count" data-disqus-url="/tomb-painter-first-dev-log/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/how-to-implement-action-sequences-and-cutscenes/">How to implement action sequences and cutscenes</a>
+      </h1>
+      <span class="post-meta"><time datetime="2018-10-03T21:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Oct 3, 2018</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#game+dev" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> game dev</a></li>
+  
+</ul>
+      <hr>
+    <article>
+<hr />
+
+<h2 id="introduction">Introduction</h2>
+
+<p><a href="https://habr.com/post/427135/">Russian translation</a></p>
+
+<p>This post will show ways of implementing actions sequences and cutscenes in video games. The code is written in Lua, but the patterns can be implemented with other languages (except the coroutine approach, because not all languages have coroutines).</p>
+
+<p>Action sequences frequently appear in games. In cutscenes, for example: a character approaches an enemy, says something, the enemy responds and so on. But action sequences often appear in gameplay as well. Take a look at this gif for example:</p>
+
+<p><img src="/assets/cutscene_article/going_into_bar.gif" alt="Sample cutscene" style="display:block; margin: 0 auto; width: 480px" /></p>
+
+</article>
+    <p><a href="/how-to-implement-action-sequences-and-cutscenes/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/how-to-implement-action-sequences-and-cutscenes/#disqus_thread" class="disqus-comment-count" data-disqus-url="/how-to-implement-action-sequences-and-cutscenes/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/meta-stuff/">How my little C++ meta-serialization library works and how I wrote it</a>
+      </h1>
+      <span class="post-meta"><time datetime="2017-09-27T22:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Sep 27, 2017</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+</ul>
+      <hr>
+    <article>
+<hr />
+
+<h2 id="introduction">Introduction</h2>
+
+<p>A year ago I wrote a small library called <i class="fa fa-github"></i><a href="https://github.com/eliasdaler/MetaStuff">MetaStuff</a>. It is used to register meta info about classes, which can be later used for serialization, deserialization, making GUI and so on. The cool thing about it is that you can write a serializer for your own data format, be it JSON, Lua or anything else. The library is very small, it uses C++14, requires no pre-build process, RTTI, macros… It’s just templates!</p>
+
+<p>Let’s look at how registration and serialization work. Suppose you have the following struct:</p>
+
+<pre class="vs-code"><span class="keyword">struct</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">Person</span>&nbsp;<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">int</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">age</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">string</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">name</span><span class="operator">;</span>
+<span class="operator">};</span></pre>
+
+<p>You register it like this:</p>
+
+<pre class="vs-code"><span class="keyword">namespace</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">meta</span>&nbsp;<span class="operator">{</span>
+
+<span class="keyword">template</span>&nbsp;<span class="operator">&lt;&gt;</span>
+<span class="keyword">inline</span>&nbsp;<span class="keyword">auto</span>&nbsp;<span class="cppFunction - identifier - (TRANSIENT)">registerMembers</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">Person</span><span class="operator">&gt;()</span>
+<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;<span class="cppFunctionTemplate - identifier - (TRANSIENT)">members</span><span class="operator">(</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppFunction - identifier - (TRANSIENT)">member</span><span class="operator">(</span><span class="string">&quot;age&quot;</span><span class="operator">,</span>&nbsp;<span class="operator">&amp;</span><span class="cppType - identifier - (TRANSIENT)">Person</span><span class="operator">::</span><span class="cppMemberField - identifier - (TRANSIENT)">age</span><span class="operator">),</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppFunction - identifier - (TRANSIENT)">member</span><span class="operator">(</span><span class="string">&quot;name&quot;</span><span class="operator">,</span>&nbsp;<span class="operator">&amp;</span><span class="cppType - identifier - (TRANSIENT)">Person</span><span class="operator">::</span><span class="cppMemberField - identifier - (TRANSIENT)">name</span><span class="operator">)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">);</span>
+<span class="operator">}</span>
+
+<span class="operator">}</span>&nbsp;<span class="comment">//&nbsp;end&nbsp;of&nbsp;namespace&nbsp;meta</span></pre>
+
+<p>And now you can serialize / deserialize it to / from JSON! (I’ll be using Niels Lohmann’s <i class="fa fa-github"></i><a href="https://github.com/nlohmann/json">JSON for Modern C++</a> library in this article)</p>
+
+<pre class="vs-code"><span class="cppType - identifier - (TRANSIENT)">Person</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">person</span><span class="operator">;</span>
+<span class="cppLocalVariable - identifier - (TRANSIENT)">person</span><span class="operator">.</span><span class="cppMemberField - identifier - (TRANSIENT)">age</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="number">30</span><span class="operator">;</span>
+<span class="cppLocalVariable - identifier - (TRANSIENT)">person</span><span class="operator">.</span><span class="cppMemberField - identifier - (TRANSIENT)">name</span>&nbsp;<span class="cppMemberOperator - operator - (TRANSIENT)">=</span>&nbsp;<span class="string">&quot;John&quot;</span><span class="operator">;</span>
+
+<span class="comment">//&nbsp;serialize</span>
+<span class="cppType - identifier - (TRANSIENT)">json</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">j</span><span class="operator">;</span>
+<span class="cppLocalVariable - identifier - (TRANSIENT)">j</span>&nbsp;<span class="cppMemberOperator - operator - (TRANSIENT)">=</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">person</span><span class="operator">;</span>
+
+<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppGlobalVariable - identifier - (TRANSIENT)">cout</span>&nbsp;<span class="cppOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppFunction - identifier - (TRANSIENT)">setw</span><span class="operator">(</span><span class="number">4</span><span class="operator">)</span>&nbsp;<span class="cppOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">j</span>&nbsp;<span class="cppMemberOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppFunctionTemplate - identifier - (TRANSIENT)">endl</span><span class="operator">;</span>
+
+<span class="comment">//&nbsp;deserialize</span>
+<span class="cppType - identifier - (TRANSIENT)">Person</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">p2</span><span class="operator">;</span>
+<span class="cppLocalVariable - identifier - (TRANSIENT)">p2</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">j</span><span class="operator">.</span><span class="identifier">get</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">Person</span><span class="operator">&gt;(</span><span class="cppLocalVariable - identifier - (TRANSIENT)">j</span><span class="operator">);</span>
+
+<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppGlobalVariable - identifier - (TRANSIENT)">cout</span>&nbsp;<span class="cppOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="string">&quot;Name&nbsp;=&nbsp;&quot;</span>&nbsp;<span class="cppOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">p2</span><span class="operator">.</span><span class="cppMemberField - identifier - (TRANSIENT)">name</span>&nbsp;<span class="cppOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="string">&quot;,&nbsp;age&nbsp;=&nbsp;&quot;</span>&nbsp;<span class="cppMemberOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">p2</span><span class="operator">.</span><span class="cppMemberField - identifier - (TRANSIENT)">age</span>&nbsp;<span class="cppOperator - operator - (TRANSIENT)">&lt;&lt;</span>&nbsp;<span class="string">&quot;\n&quot;</span><span class="operator">;</span></pre>
+
+<p>Output:</p>
+
+<pre class="console-output">{
+    "age": 30,
+    "name": "John"
+}
+Name = John, age = 30</pre>
+
+<p>Simple as that!</p>
+
+</article>
+    <p><a href="/meta-stuff/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/meta-stuff/#disqus_thread" class="disqus-comment-count" data-disqus-url="/meta-stuff/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/re-creation-devlog-december-march/">Re:creation dev log. December 2016 - March 2017.</a>
+      </h1>
+      <span class="post-meta"><time datetime="2017-04-19T23:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Apr 19, 2017</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Re%3Acreation" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Re:creation</a></li>
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#Dev+log" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Dev log</a></li>
+  
+</ul>
+      <hr>
+    <article>
+<p>No posts in four months! And I haven’t worked on the game for the last one and a half. Is the project dead? No! Let’s pretend that nothing happened and I’ll show what I did since December and will tell about my future plans in the end.</p>
+
+<p><img src="/assets/re_creation_dev_log_dec_march/child_parent.gif" alt="Child-parent example" /></p>
+
+</article>
+    <p><a href="/re-creation-devlog-december-march/#read-more" role="button">Continue reading →</a>
+    </p>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/re-creation-devlog-december-march/#disqus_thread" class="disqus-comment-count" data-disqus-url="/re-creation-devlog-december-march/"></a>
+    <br />
+    <br />
+  
+      <h1>
+        <a class="post-title" href="/game-object-references/">Making and storing references to game objects (entities) in C++ and Lua</a>
       </h1>
       <span class="post-meta"><time datetime="2017-01-22T14:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jan 22, 2017</b></time></span>
 <ul class="tags">
@@ -125,34 +390,14 @@
 <p>Let’s see all these problems can be solved. The latest solution (about storing references to Lua) was discovered by me not long ago and it is the point of me writing the article, but I want to show some other ways of solving the problem. Let’s start!</p>
 
 </article>
-    <p><a href="/game-object-references#read-more" role="button">Continue reading →</a>
+    <p><a href="/game-object-references/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/game-object-references#disqus_thread" class="disqus-comment-count" data-disqus-url="/game-object-references"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/game-object-references/#disqus_thread" class="disqus-comment-count" data-disqus-url="/game-object-references/"></a>
     <br />
     <br />
   
       <h1>
-        <a class="post-title" href="/2016">2016</a>
-      </h1>
-      <span class="post-meta"><time datetime="2017-01-08T23:10:58+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jan 8, 2017</b></time></span>
-<ul class="tags">
-  
-    <li><a href="/tags#Personal" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Personal</a></li>
-  
-</ul>
-      <hr>
-    <article><p><img src="http://i.imgur.com/rrQWIM4.jpg" alt="Animation editor" style="display:block; margin: 0 auto;" />
-2016 was pretty good for me. There were a lot of positive changes, I learned a lot and got some unexpected recognition for my work!</p>
-
-</article>
-    <p><a href="/2016#read-more" role="button">Continue reading →</a>
-    </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/2016#disqus_thread" class="disqus-comment-count" data-disqus-url="/2016"></a>
-    <br />
-    <br />
-  
-      <h1>
-        <a class="post-title" href="/re-creation-devlog-july-november2016">Re:creation dev log. July - November 2016</a>
+        <a class="post-title" href="/re-creation-devlog-july-november2016/">Re:creation dev log. July - November 2016</a>
       </h1>
       <span class="post-meta"><time datetime="2016-11-27T21:39:58+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Nov 27, 2016</b></time></span>
 <ul class="tags">
@@ -178,14 +423,14 @@
 <p>Okay, let’s begin!</p>
 
 </article>
-    <p><a href="/re-creation-devlog-july-november2016#read-more" role="button">Continue reading →</a>
+    <p><a href="/re-creation-devlog-july-november2016/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/re-creation-devlog-july-november2016#disqus_thread" class="disqus-comment-count" data-disqus-url="/re-creation-devlog-july-november2016"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/re-creation-devlog-july-november2016/#disqus_thread" class="disqus-comment-count" data-disqus-url="/re-creation-devlog-july-november2016/"></a>
     <br />
     <br />
   
       <h1>
-        <a class="post-title" href="/using-imgui-with-sfml-pt2">Using ImGui with modern C++ and STL for creating awesome game dev tools. Part 2. Some tips and tricks.</a>
+        <a class="post-title" href="/using-imgui-with-sfml-pt2/">Using ImGui with modern C++ and STL for creating awesome game dev tools. Part 2. Some tips and tricks.</a>
       </h1>
       <span class="post-meta"><time datetime="2016-07-21T20:34:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 21, 2016</b></time></span>
 <ul class="tags">
@@ -207,51 +452,17 @@
 <p class="message">If you use SFML and want to learn how to use it with ImGui, use <i class="fa fa-github" aria-hidden="true"></i><a href="https://github.com/eliasdaler/imgui-sfml">my binding</a> and refer to <a href="https://eliasdaler.github.io/using-imgui-with-sfml-pt1">this tutorial</a> about setting it up!</p>
 
 <p><img src="https://eliasdaler.files.wordpress.com/2016/05/examples_01.png?w=662" alt="ImGui widgets" style="display:block; margin: 0 auto;" /></p>
-<p style="text-align: center;"><i>Different ImGui widgets (taken from ImGui’s github page)</i></p>
-
-<h1 id="contents">Contents</h1>
-
-<ul>
-    <li><a href="#introduction">Introduction</a></li>
-    <li><a href="#imgui-demo-window">ImGui Demo Window</a></li>
-    <li><a href="#labels">Labels</a></li>
-    <li><a href="#getting-back-to-the-context-of-the-window-tree-etc">Getting back to the context of the window, tree, etc.</a></li>
-    <li><a href="#inputfloatn--struct">InputFloatN + struct</a></li>
-    <li><a href="#using-imgui-with-stl">Using ImGui with STL</a></li>  
-    <ul>
-        <li><a href="#arrays">Arrays</a></li>
-        <li><a href="#combobox-listbox">ComboBox, ListBox</a></li>
-        <li><a href="#inputtext-and-stdstring">InputText and std::string</a></li>
-    </ul>
-    <li><a href="#callbacks">Callbacks</a></li>
-    <li><a href="#conclusion">Conclusion</a></li>
-</ul>
-<hr />
-
-<h1 id="introduction">Introduction</h1>
-
-<p>If you didn’t read <a href="https://eliasdaler.github.io/using-imgui-with-sfml-pt1">the first article</a>, here’s a short recap to get you started.</p>
-
-<p><i class="fa fa-github" aria-hidden="true"></i><a href="https://github.com/ocornut/imgui">Dear ImGui</a> is an amazing library which can be used to create fast GUI for your game dev (and not only!) tools in very short amount of time. The resulting code is very simple to use and modify, you don’t have to store GUI widgets or register callbacks. Here’s some stuff that I’ve made in ImGui for <a href="http://en.sfml-dev.org/forums/index.php?topic=18062.0">my game</a>:</p>
-
-<p><img src="https://i2.wp.com/i.imgur.com/iQibpSk.gif" alt="Level editor" style="display:block; margin: 0 auto;" /></p>
-<p style="text-align: center;"><i>Level Editor</i></p>
-
-<p><br />
-<img src="https://i0.wp.com/i.imgur.com/A44zLlb.gif" alt="Animation editor" style="display:block; margin: 0 auto;" /></p>
-<p style="text-align: center;"><i>Animation editor</i></p>
-
-<p>Okay, enough of intros, let’s get right to tips.</p>
+<p style="text-align: center;"><i>Different ImGui widgets (taken from ImGui's github page)</i></p>
 
 </article>
-    <p><a href="/using-imgui-with-sfml-pt2#read-more" role="button">Continue reading →</a>
+    <p><a href="/using-imgui-with-sfml-pt2/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/using-imgui-with-sfml-pt2#disqus_thread" class="disqus-comment-count" data-disqus-url="/using-imgui-with-sfml-pt2"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/using-imgui-with-sfml-pt2/#disqus_thread" class="disqus-comment-count" data-disqus-url="/using-imgui-with-sfml-pt2/"></a>
     <br />
     <br />
   
       <h1>
-        <a class="post-title" href="/using-imgui-with-sfml-pt1">Using ImGui with SFML for creating awesome game dev tools. Part 1.</a>
+        <a class="post-title" href="/using-imgui-with-sfml-pt1/">Using ImGui with SFML for creating awesome game dev tools. Part 1.</a>
       </h1>
       <span class="post-meta"><time datetime="2016-07-10T15:42:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 10, 2016</b></time></span>
 <ul class="tags">
@@ -267,38 +478,29 @@
 </ul>
       <hr>
     <article>
-<p>Related article: <a href="https://eliasdaler.github.io/using-imgui-with-sfml-pt2">Using ImGui with modern C++ and STL</a>
-___</p>
+<hr />
+
+<p>Related article: <a href="https://eliasdaler.github.io/using-imgui-with-sfml-pt2">Using ImGui with modern C++ and STL</a></p>
+
+<hr />
 
 <p>This is the first part of tutorial about Dear ImGui (AKA ImGui) and it’ll show you how to set it up with SFML. The second part will be library agnostic and will talk about common ways of doing stuff in ImGui, some awesome widgets and some useful STL overloads.</p>
 
-<p class="image-description"><img src="https://eliasdaler.files.wordpress.com/2016/05/examples_01.png?w=662" alt="ImGui widgets" class="centered-image" />
-Different ImGui widgets (taken from ImGui’s github page)</p>
+<p><img src="https://eliasdaler.files.wordpress.com/2016/05/examples_01.png?w=662" alt="ImGui widgets" /></p>
+
+<p class="img-desc">Different ImGui widgets (taken from ImGui’s github page)</p>
+
 <hr />
 
-<h2 id="introduction">Introduction</h2>
-
-<p>Having good content creation (level editor, resource editor, etc.) and debugging tools for your game is very important and can lead to productivity and creativity boost. Here are some examples of tools I managed to make with ImGui for <a href="https://eliasdaler.wordpress.com/2014/10/19/recreation-info-press-kit/">my game</a>:</p>
-
-<p class="image-description"><img src="https://i.imgur.com/iQibpSk.gif" alt="Level editor" class="centered-image" />
-Level Editor</p>
-
-<p class="image-description"><img src="https://i.imgur.com/A44zLlb.gif" alt="Animation editor" class="centered-image" />
-Animation editor</p>
-
-<p class="message">It was possible to add ability to change members of C++ objects with ImGui by doing some <i class="fa fa-github"></i><a href="https://github.com/eliasdaler/MetaStuff&quot;&gt;meta template stuff">meta template stuff</a>, maybe I’ll write an article about that later!</p>
-
-<p>As you can see there’s a wide range of widgets that ImGui can provide and there are lots of other great examples of how other people use it here.</p>
-
 </article>
-    <p><a href="/using-imgui-with-sfml-pt1#read-more" role="button">Continue reading →</a>
+    <p><a href="/using-imgui-with-sfml-pt1/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/using-imgui-with-sfml-pt1#disqus_thread" class="disqus-comment-count" data-disqus-url="/using-imgui-with-sfml-pt1"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/using-imgui-with-sfml-pt1/#disqus_thread" class="disqus-comment-count" data-disqus-url="/using-imgui-with-sfml-pt1/"></a>
     <br />
     <br />
   
       <h1>
-        <a class="post-title" href="/better-highlighting">Improving code highlighting on blogs</a>
+        <a class="post-title" href="/better-highlighting/">Improving code highlighting on blogs</a>
       </h1>
       <span class="post-meta"><time datetime="2016-07-10T15:42:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 10, 2016</b></time></span>
 <ul class="tags">
@@ -326,11 +528,11 @@ Animation editor</p>
     <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">luaL_loadfile</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">filename</span><span class="p">.</span><span class="n">c_str</span><span class="p">())</span> <span class="o">||</span> <span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">numberOrArgs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)))</span> <span class="p">{</span>
         <span class="n">log</span><span class="p">(</span><span class="n">LogManager</span><span class="o">::</span><span class="n">MessageType</span><span class="o">::</span><span class="n">Lua</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"Loaded script: "</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span><span class="p">;</span>
         <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// some error
-</span>        <span class="n">log</span><span class="p">(</span><span class="n">LogManager</span><span class="o">::</span><span class="n">MessageType</span><span class="o">::</span><span class="n">Lua_Exception</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"Failed to load: "</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// some error</span>
+        <span class="n">log</span><span class="p">(</span><span class="n">LogManager</span><span class="o">::</span><span class="n">MessageType</span><span class="o">::</span><span class="n">Lua_Exception</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="s">"Failed to load: "</span> <span class="o">&lt;&lt;</span> <span class="n">filename</span><span class="p">;</span>
         <span class="n">log</span><span class="p">(</span><span class="n">LogManager</span><span class="o">::</span><span class="n">MessageType</span><span class="o">::</span><span class="n">Lua_Exception</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
-        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// pop error message from stack
-</span>        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span> <span class="c1">// pop error message from stack</span>
+        <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></figure>
 
@@ -354,14 +556,14 @@ Animation editor</p>
 <p><strong>That’s so much better</strong>. Let’s see how it works and why it’s much more detailed.</p>
 
 </article>
-    <p><a href="/better-highlighting#read-more" role="button">Continue reading →</a>
+    <p><a href="/better-highlighting/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/better-highlighting#disqus_thread" class="disqus-comment-count" data-disqus-url="/better-highlighting"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/better-highlighting/#disqus_thread" class="disqus-comment-count" data-disqus-url="/better-highlighting/"></a>
     <br />
     <br />
   
       <h1>
-        <a class="post-title" href="/cppcast">CppCast: Talking about Lua and C++ in game development</a>
+        <a class="post-title" href="/cppcast/">CppCast: Talking about Lua and C++ in game development</a>
       </h1>
       <span class="post-meta"><time datetime="2016-07-09T01:50:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 9, 2016</b></time></span>
 <ul class="tags">
@@ -378,14 +580,14 @@ Listen to it <a href="http://cppcast.com/2016/07/elias-daler">here</a>.</p>
 <p>Here are my some thoughts about CppCast and the episode.</p>
 
 </article>
-    <p><a href="/cppcast#read-more" role="button">Continue reading →</a>
+    <p><a href="/cppcast/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/cppcast#disqus_thread" class="disqus-comment-count" data-disqus-url="/cppcast"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/cppcast/#disqus_thread" class="disqus-comment-count" data-disqus-url="/cppcast/"></a>
     <br />
     <br />
   
       <h1>
-        <a class="post-title" href="/first-post">New blog, new articles!</a>
+        <a class="post-title" href="/first-post/">New blog, new articles!</a>
       </h1>
       <span class="post-meta"><time datetime="2016-07-07T14:50:20+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 7, 2016</b></time></span>
 <ul class="tags">
@@ -429,7 +631,7 @@ After using my <a href="https://eliasdaler.wordpress.com/">old blog</a> for seve
         <span class="cppLocalVariable">log</span><span class="cppMemberOperator">(</span><span class="cppType">LogManager</span><span class="operator">::</span><span class="cppType">MessageType</span><span class="operator">::</span><span class="cppEnumerator">Error</span><span class="cppMemberOperator">)</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="cppMemberField">name</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="string">&quot;: Component with type &quot;</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="cppParameter">componentName</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="string">&quot;already exists.&quot;</span><span class="operator">;</span>
         <span class="keyword">return</span><span class="operator">;</span>
     <span class="operator">}</span>
- 
+
     <span class="keyword">auto</span> <span class="cppLocalVariable">c</span> <span class="operator">=</span> <span class="cppLocalVariable">componentManager</span><span class="operator">.</span><span class="cppMemberFunction">createComponent</span><span class="operator">(</span><span class="cppLocalVariable">componentType</span><span class="operator">);</span>
     <span class="cppLocalVariable">componentManager</span><span class="operator">.</span><span class="cppMemberFunction">loadFromLua</span><span class="operator">(</span><span class="cppLocalVariable">componentType</span><span class="operator">,</span> <span class="cppMemberOperator">*</span><span class="cppLocalVariable">c</span><span class="operator">,</span> <span class="cppMemberField">name</span><span class="operator">,</span> <span class="cppParameter">loader</span><span class="operator">);</span>
     <span class="cppLocalVariable">c</span><span class="cppMemberOperator">-&gt;</span><span class="cppMemberField">owner</span> <span class="operator">=</span> <span class="keyword">this</span><span class="operator">;</span>
@@ -441,9 +643,9 @@ After using my <a href="https://eliasdaler.wordpress.com/">old blog</a> for seve
 <p>There are some new articles coming soon and will be published on this blog, but first, let’s talk about it.</p>
 
 </article>
-    <p><a href="/first-post#read-more" role="button">Continue reading →</a>
+    <p><a href="/first-post/#read-more" role="button">Continue reading →</a>
     </p>
-    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/first-post#disqus_thread" class="disqus-comment-count" data-disqus-url="/first-post"></a>
+    <i class="fa fa-comments" aria-hidden="true"></i> <a href="/first-post/#disqus_thread" class="disqus-comment-count" data-disqus-url="/first-post/"></a>
     <br />
     <br />
   

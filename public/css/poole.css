@@ -212,10 +212,11 @@ blockquote p:last-child {
 }
 
 img {
-  display: block;
+  text-align:center;
   max-width: 100%;
-  margin: 0 0 1rem;
-  padding: 1rem 0 1rem 0;
+  width: 100%;
+  display:block;
+  margin:auto;
 }
 
 /* Tables */
@@ -263,17 +264,9 @@ tbody tr:nth-child(odd) th {
 }
 
 /*
- * Centered image
- */
- .centered-image {
-  display:block;
-  margin: 0 auto;
- }
-
-/*
  * Image description
  */
-.image-description {
+.img-desc {
   font-style: italic;
   text-align: center;
 }
@@ -341,6 +334,7 @@ tbody tr:nth-child(odd) th {
 .page-title,
 .post-title {
   margin-top: 0;
+  text-align: center;
 }
 
 /* Meta data line below post title */

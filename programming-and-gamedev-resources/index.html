@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Useful programming and game development resources &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item active" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post">
+
+  <header class="post-header">
+    <h1 class="post-title">Useful programming and game development resources</h1>
+  </header>
+
+  <div class="post-content">
+    
+<p class="message">This list will be constantly updated as I discover new awesome stuff. It’s a stuff that I recommend <strong>personally</strong>: there are still some universally praised books which may be added here in the future!</p>
+
+<p class="message">Click on a book cover to go to it’s Amazon’s page.</p>
+
+<h2 class="no_toc" id="table-of-contents">Table of contents</h2>
+
+<style>
+#markdown-toc ul {
+    margin-bottom: 5px;
+    padding-left: 15px;
+}
+</style>
+
+<ul style="font-size:90%;line-height:1;" id="markdown-toc">
+  <li><a href="#programming" id="markdown-toc-programming">Programming</a>    <ul>
+      <li><a href="#general-programming-design" id="markdown-toc-general-programming-design">General Programming, Design</a>        <ul>
+          <li><a href="#code-complete" id="markdown-toc-code-complete">Code Complete</a></li>
+          <li><a href="#from-mathematics-to-generic-programming" id="markdown-toc-from-mathematics-to-generic-programming">From Mathematics to Generic Programming</a></li>
+          <li><a href="#design-patterns-elements-of-reusable-object-oriented-software-gof" id="markdown-toc-design-patterns-elements-of-reusable-object-oriented-software-gof">Design Patterns: Elements of Reusable Object-Oriented Software (GOF)</a></li>
+          <li><a href="#other-notable-books" id="markdown-toc-other-notable-books">Other notable books</a></li>
+        </ul>
+      </li>
+      <li><a href="#computer-architecture" id="markdown-toc-computer-architecture">Computer Architecture</a>        <ul>
+          <li><a href="#code-the-hidden-language-of-computer-hardware" id="markdown-toc-code-the-hidden-language-of-computer-hardware">Code: The Hidden Language of Computer Hardware</a></li>
+          <li><a href="#computer-systems-a-programmers-perspective" id="markdown-toc-computer-systems-a-programmers-perspective">Computer Systems: A Programmer’s Perspective</a></li>
+        </ul>
+      </li>
+      <li><a href="#cmake" id="markdown-toc-cmake">CMake</a>        <ul>
+          <li><a href="#professional-cmake" id="markdown-toc-professional-cmake">Professional CMake</a></li>
+        </ul>
+      </li>
+      <li><a href="#c" id="markdown-toc-c">C++</a>        <ul>
+          <li><a href="#c-primer-5th-edition" id="markdown-toc-c-primer-5th-edition">C++ Primer (5th Edition)</a></li>
+          <li><a href="#effective-c-more-effective-c-effective-modern-c" id="markdown-toc-effective-c-more-effective-c-effective-modern-c">Effective C++, More Effective C++, Effective Modern C++</a></li>
+          <li><a href="#a-tour-of-c--the-c-programming-language" id="markdown-toc-a-tour-of-c--the-c-programming-language">A Tour of C++ / The C++ Programming Language</a></li>
+          <li><a href="#c-coding-standards-101-rules-guidelines-and-best-practices" id="markdown-toc-c-coding-standards-101-rules-guidelines-and-best-practices">C++ Coding Standards: 101 Rules, Guidelines, and Best Practices</a></li>
+          <li><a href="#other-notable-books-1" id="markdown-toc-other-notable-books-1">Other notable books</a></li>
+          <li><a href="#resources" id="markdown-toc-resources">Resources</a></li>
+        </ul>
+      </li>
+      <li><a href="#lua" id="markdown-toc-lua">Lua</a>        <ul>
+          <li><a href="#programming-in-lua" id="markdown-toc-programming-in-lua">Programming in Lua</a></li>
+          <li><a href="#resources-1" id="markdown-toc-resources-1">Resources</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#gamedev" id="markdown-toc-gamedev">Gamedev</a>    <ul>
+      <li><a href="#generalengine-design" id="markdown-toc-generalengine-design">General/Engine design</a>        <ul>
+          <li><a href="#game-engine-architecture" id="markdown-toc-game-engine-architecture">Game Engine Architecture</a></li>
+          <li><a href="#game-programming-patterns" id="markdown-toc-game-programming-patterns">Game Programming Patterns</a></li>
+          <li><a href="#sfml-game-development" id="markdown-toc-sfml-game-development">SFML Game Development</a></li>
+        </ul>
+      </li>
+      <li><a href="#specifics" id="markdown-toc-specifics">Specifics</a>        <ul>
+          <li><a href="#programming-game-ai-by-example" id="markdown-toc-programming-game-ai-by-example">Programming Game AI By Example</a></li>
+          <li><a href="#more-awesome-books" id="markdown-toc-more-awesome-books">More awesome books:</a></li>
+          <li><a href="#resources-2" id="markdown-toc-resources-2">Resources:</a></li>
+        </ul>
+      </li>
+      <li><a href="#game-design" id="markdown-toc-game-design">Game Design</a>        <ul>
+          <li><a href="#the-art-of-game-design-a-book-of-lenses" id="markdown-toc-the-art-of-game-design-a-book-of-lenses">The Art of Game Design: A Book of Lenses</a></li>
+          <li><a href="#level-up-the-guide-to-great-video-game-design" id="markdown-toc-level-up-the-guide-to-great-video-game-design">Level Up! The Guide to Great Video Game Design</a></li>
+          <li><a href="#game-feel-a-game-designers-guide-to-virtual-sensation" id="markdown-toc-game-feel-a-game-designers-guide-to-virtual-sensation">Game Feel: A Game Designer’s Guide to Virtual Sensation</a></li>
+        </ul>
+      </li>
+      <li><a href="#post-mortems--books-about-development-of-games" id="markdown-toc-post-mortems--books-about-development-of-games">Post mortems / books about development of games</a>        <ul>
+          <li><a href="#masters-of-doom-how-two-guys-created-an-empire-and-transformed-pop-culture" id="markdown-toc-masters-of-doom-how-two-guys-created-an-empire-and-transformed-pop-culture">Masters of Doom: How Two Guys Created an Empire and Transformed Pop Culture</a></li>
+          <li><a href="#postmortems-from-game-developer" id="markdown-toc-postmortems-from-game-developer">Postmortems From Game Developer</a></li>
+          <li><a href="#half-life-2-raising-the-bar" id="markdown-toc-half-life-2-raising-the-bar">Half-Life 2: Raising the Bar</a></li>
+          <li><a href="#resources-3" id="markdown-toc-resources-3">Resources</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="programming">Programming</h1>
+
+<h2 id="general-programming-design">General Programming, Design</h2>
+
+<h3 id="code-complete">Code Complete</h3>
+
+<p><a href="https://www.amazon.com/Code-Complete-Practical-Handbook-Construction/dp/0735619670"><img src="/assets/book_covers/code_complete.jpg" style="width:205px;height:250px;" /></a></p>
+
+<p>If I had to name a book that every programmer needs to read, I’d name this one. It has lots of useful advice on almost every aspect of programming: architecture, style, naming, performance, debugging etc. It teaches you how to write clean and maintainable code, fix performance issues, debug efficiently and many more. I believe that I’ve greatly improved as a programmer when I read it and I think everyone will learn something important from it as well.</p>
+
+<h3 id="from-mathematics-to-generic-programming">From Mathematics to Generic Programming</h3>
+
+<p><a href="https://www.amazon.com/Mathematics-Generic-Programming-Alexander-Stepanov/dp/0321942043"><img src="/assets/book_covers/from_math_to_gen_prog.jpg" style="width:205px;height:250px;" /></a></p>
+
+<p>This is a book about how generic programming and mathematics resemble each other in sometimes unexpected ways. The book has a lot of interesting information on abstract algebra, templates and concepts (in generic programming sense). It also shows very interesting ways of solving different algorithmic problems with templates while explaining it in mathematical terms along the way.</p>
+
+<h3 id="design-patterns-elements-of-reusable-object-oriented-software-gof">Design Patterns: Elements of Reusable Object-Oriented Software (GOF)</h3>
+
+<p><a href="https://www.amazon.com/Design-Patterns-Elements-Reusable-Object-Oriented/dp/0201633612"><img src="/assets/book_covers/design_patterns.png" style="width:205px;height:250px;" /></a></p>
+
+<p>This book is a bit outdated (it was written in 1994!) and sometimes you can see it by the way the code is written in it, but it still shows you a lot of useful design patterns which will definitely become your tools to solve different kinds of problems. This book showed me some interesting problems with code architecture which I’ve never encountered before, but when I will, I’ll be prepared, thanks to great explanations and general approach to problem solving this book teaches.</p>
+
+<h3 id="other-notable-books">Other notable books</h3>
+<ul>
+  <li><a href="https://www.amazon.com/Practice-Programming-Addison-Wesley-Professional-Computing/dp/020161586X">The Practice of Programming</a></li>
+  <li><a href="https://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">Clean Code: A Handbook of Agile Software Craftsmanship</a></li>
+  <li><a href="https://www.amazon.com/Refactoring-Improving-Existing-Addison-Wesley-Technology-ebook/dp/B007WTFWJ6">Refactoring: Improving the Design of Existing Code</a></li>
+  <li><a href="https://www.amazon.com/Working-Effectively-Legacy-Robert-Martin-ebook/dp/B005OYHF0A">Working Effectively with Legacy Code</a></li>
+</ul>
+
+<h2 id="computer-architecture">Computer Architecture</h2>
+
+<h3 id="code-the-hidden-language-of-computer-hardware">Code: The Hidden Language of Computer Hardware</h3>
+
+<p><a href="https://www.amazon.com/Code-Language-Computer-Hardware-Software/dp/0735611319"><img src="/assets/book_covers/code.jpg" style="width:205px;height:300px;" /></a></p>
+
+<p>This is a book you should read if you want to learn how computers were invented, how they evolved over the years and how they work now. The book tells a history of computers from the beginnings (Analytical Engine, Boolean Algebra) and simplest principles of relays, but along the way it shows you more complex mechanisms explaining almost every bit of how computers work. It is very technical, but it tells you a lot of interesting facts and stories, which is just amazing and makes it one of the best books about computers ever. You can read it if you didn’t have any experience with low level systems of computers, which makes it even greater.</p>
+
+<h3 id="computer-systems-a-programmers-perspective">Computer Systems: A Programmer’s Perspective</h3>
+
+<p><a href="https://www.amazon.com/Computer-Systems-Programmers-Perspective-3rd/dp/013409266X"><img src="/assets/book_covers/computer_systems.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>I found this book while I was looking for resources on learning assembly. And it was just what I needed. The book is presented from a programmer’s perspective: not just teaching assembly, but also showing how C code translates into assembly. It has a lot of exercises which are interesting to solve and help the reader understand the material better. If you ever wanted to learn assembly, low level programming and principles of translating source code into assembly, this is a perfect book for it.</p>
+
+<h2 id="cmake">CMake</h2>
+
+<h3 id="professional-cmake">Professional CMake</h3>
+
+<p><a href="https://crascit.com/professional-cmake/"><img src="/assets/book_covers/professional_cmake.jpg" style="width:205px;height:250px;" /></a></p>
+
+<p>This book will teach you everything you need to know about CMake. It’s written by Craig Scott, one of the main developers of CMake and it will show you how to setup your build system in a nice and portable way.</p>
+
+<h2 id="c">C++</h2>
+
+<h3 id="c-primer-5th-edition">C++ Primer (5th Edition)</h3>
+
+<p><a href="https://www.amazon.com/Primer-5th-Stanley-B-Lippman/dp/0321714113"><img src="/assets/book_covers/cpp_primer.jpg" style="width:205px;height:250px;" /></a></p>
+
+<p>This is the best starter C++ book I’ve found to date. What is even better is that it has been updated to C++11 and this is very important, because I believe that newcomers to C++ should learn the modern ways of programming in C++ to make overall learning experience easier and pleasant. I didn’t learn C++ by this book, but I wish I did back then!</p>
+
+<h3 id="effective-c-more-effective-c-effective-modern-c">Effective C++, More Effective C++, Effective Modern C++</h3>
+
+<p><a href="https://www.amazon.com/Effective-Modern-Specific-Ways-Improve/dp/1491903996"><img src="/assets/book_covers/effective_modern_cpp.png" style="width:260px;height:320px;" /></a></p>
+
+<p>Some people may think that these books are for professionals with tons of
+experience and C++ skill, but this is not true! They contain a lot of useful advice and tips and will certainly save you from headaches, if you encounter some of the problems described in the book.</p>
+
+<p>Some of the code and advice from the first two books is a bit outdated (for example, you shouldn’t ever use <code class="highlighter-rouge">auto_ptr</code> now), but most of it is still true today.</p>
+
+<p>I especially like Effective Modern C++ because it taught me a lot of modern C++ (when I first read it, I wasn’t really experienced in C++11). It also contains a lot of humor which isn’t something you usually encounter in a book about C++. There are some very complex issues discussed in the book (especially about lambda captures and move/rvalues), so feel free to skip them if you brain starts to hurt, these are edge cases and one of the most complex things in C++.</p>
+
+<h3 id="a-tour-of-c--the-c-programming-language">A Tour of C++ / The C++ Programming Language</h3>
+
+<p><a href="https://www.amazon.com/C-Programming-Language-4th/dp/0321563840"><img src="/assets/book_covers/cpp_programming_language.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>A Tour of C++ is the first chapter of The C++ Programming Language by B. Stroustrup and it displays what makes modern C++ great. Other chapters become much more detailed and show you different things about C++ and standard library. You probably won’t want to start learning C++ from this book, but it is great as a reference if you want to learn something in particular.</p>
+
+<h3 id="c-coding-standards-101-rules-guidelines-and-best-practices">C++ Coding Standards: 101 Rules, Guidelines, and Best Practices</h3>
+
+<p><a href="https://www.amazon.com/Coding-Standards-Rules-Guidelines-Practices/dp/0321113586"><img src="/assets/book_covers/cpp_coding_standards.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book provides a lot of info about making your code better, readable and efficient. Some of the things (thankfully!) don’t apply to modern C++ anymore, but there’s still a lot of useful insights that you can get from reading this book.</p>
+
+<h3 id="other-notable-books-1">Other notable books</h3>
+
+<ul>
+  <li><a href="https://www.amazon.com/Standard-Library-Tutorial-Reference-2nd/dp/0321623215">The C++ Standard Library: A Tutorial and Reference</a></li>
+  <li><a href="https://www.amazon.com/API-Design-C-Martin-Reddy/dp/0123850037">API Design for C++</a></li>
+  <li><a href="https://www.amazon.com/Discovering-Modern-Scientists-Programmers-Depth/dp/0134383583">Discovering Modern C++: An Intensive Course for Scientists, Engineers, and programmers</a></li>
+</ul>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://isocpp.org/faq">C++ super FAQ</a></li>
+  <li><a href="https://herbsutter.com/">Sutter’s Mill</a> - Herb Sutter’s blog full of amazing articles about C++</li>
+  <li><a href="https://blogs.msdn.microsoft.com/vcblog/">Visual C++ Team Blog</a> - C++ related stuff in Visual Studio, standard library improvements and more!</li>
+  <li><a href="https://scottmeyers.blogspot.com">Scott Meyer’s blog</a></li>
+  <li><a href="https://www.reddit.com/r/cpp/">/r/cpp</a> - great subreddit full of awesome discussion and posts about C++</li>
+</ul>
+
+<h2 id="lua">Lua</h2>
+
+<h3 id="programming-in-lua">Programming in Lua</h3>
+
+<p><a href="https://www.amazon.com/Programming-Lua-Fourth-Roberto-Ierusalimschy/dp/8590379868"><img src="/assets/book_covers/programming_in_lua.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book is one of the best programming books I’ve read. It starts simple and quickly starts explaining more difficult areas of Lua while highlighting what makes it such a great language. It covers a lot of areas, so it’s not only a great book to learn Lua, but also a great reference.</p>
+
+<h3 id="resources-1">Resources</h3>
+
+<ul>
+  <li><a href="https://www.lua.org/gems/sample.pdf">Lua performance tips</a></li>
+  <li><a href="http://lua-users.org/wiki/">lua-users wiki</a></li>
+  <li><a href="http://www.luafaq.org/gotchas.html">Lua gotchas</a></li>
+  <li><a href="http://lua.space/">lua.space</a></li>
+  <li><a href="http://kiki.to/">kiki.to</a> - great blog with lots of useful articles. Lots of useful libraries on <a href="https://github.com/kikito">author’s github</a>.</li>
+</ul>
+
+<h1 id="gamedev">Gamedev</h1>
+
+<h2 id="generalengine-design">General/Engine design</h2>
+
+<h3 id="game-engine-architecture">Game Engine Architecture</h3>
+
+<p><a href="https://www.amazon.com/Engine-Architecture-Second-Jason-Gregory/dp/1466560010"><img src="/assets/book_covers/game_engine_architecture.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book is one of my favorite books ever. I can’t praise it enough: it’s the book that helped me become much greater programmer and structure my engine in great way. It’s <strong>huge</strong> and it covers a very wide range of topics. I learn something new each time I re-read it: and I’ve already did it a couple of times. If I had to recommend one book about game dev to everyone it’ll be this one. Go read it!</p>
+
+<h3 id="game-programming-patterns">Game Programming Patterns</h3>
+
+<p><a href="https://www.amazon.com/Game-Programming-Patterns-Robert-Nystrom/dp/0990582906"><img src="/assets/book_covers/game_programming_patterns.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>While Game Engine Architecture covers more topics, this one gets more specific in various details and has some really amazing code examples. By the way, you can read it for free <a href="http://gameprogrammingpatterns.com/contents.html">here</a>! It’s written very nicely, contains a lot of useful stuff and will definitely teach you how to make things more structured and sane. If you find yourself trapped by your code and want to make it much better, read this book, it will teach you a lot.</p>
+
+<h3 id="sfml-game-development">SFML Game Development</h3>
+
+<p><a href="https://www.amazon.com/SFML-Game-Development-Jan-Haller/dp/1849696845"><img src="/assets/book_covers/sfml_game_dev.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book is a fantastic start for beginner programmers. I wish I had read it when I was one, it would have certainly saved months of my life! But I read it after 6 years of doing C++ and game dev. And it still taught me a lot and helped me rebuild some parts of my engine. What I like about this book is that it covers a lot and stays very in-depth and explains every piece of code in a nice way. After reading and following this book, you’ll have a pretty nice structured game! Check out <a href="https://github.com/SFML/SFML-Game-Development-Book">source code of examples</a>: it’s written very well.</p>
+
+<h2 id="specifics">Specifics</h2>
+
+<h3 id="programming-game-ai-by-example">Programming Game AI By Example</h3>
+
+<p><a href="https://www.amazon.com/Programming-Example-Wordware-Developers-Library/dp/1556220782"><img src="/assets/book_covers/programming_game_ai_by_example.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This books is amazing introduction to Game AI: it starts with state machines, proceeds to steering algorithms and then covers some pretty difficult topics! And it does everything just perfectly. The code is well structured and explained quite well: it’s easy to follow along and implement your own stuff based on it.</p>
+
+<h3 id="more-awesome-books">More awesome books:</h3>
+<ul>
+  <li><a href="https://www.amazon.com/Artificial-Intelligence-Games-Ian-Millington/dp/0123747317">Artificial Intelligence for Games</a></li>
+  <li><a href="https://www.amazon.com/Real-Time-Collision-Detection-Interactive-Technology/dp/1558607323">Real-Time Collision Detection</a></li>
+  <li><a href="https://www.amazon.com/Real-Time-Rendering-Third-Tomas-Akenine-Moller/dp/1568814240">Real-Time Rendering</a></li>
+</ul>
+
+<h3 id="resources-2">Resources:</h3>
+<ul>
+  <li><a href="https://www.youtube.com/user/GameEngineArchitects">Game engine architecture club</a> - some great talks about engine design</li>
+  <li><a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Time Step</a> - great article about fixed delta, great blog in general, mostly about networking and multiplayer</li>
+  <li><a href="http://gamesfromwithin.com/">Games from Within</a> - a blog about data-oriented design and other game dev stuff</li>
+  <li><a href="http://t-machine.org/index.php/2007/09/03/entity-systems-are-the-future-of-mmog-development-part-1/">Entity systems are future of MMOG development</a></li>
+  <li><a href="http://higherorderfun.com/blog/2012/05/20/the-guide-to-implementing-2d-platformers/">Guide to implementing 2D platformers</a></li>
+  <li><a href="http://ithare.com/">IT Hare</a> - great blog about various aspects of programming and game development</li>
+  <li><a href="https://gamemechanicexplorer.com">Game Mechanic Explorer</a> - great souce code examples of common algorithms (walking and jumping, basic AI, lighting, etc.)</li>
+</ul>
+
+<h2 id="game-design">Game Design</h2>
+
+<h3 id="the-art-of-game-design-a-book-of-lenses">The Art of Game Design: A Book of Lenses</h3>
+
+<p><a href="https://www.amazon.com/Art-Game-Design-Lenses-Second/dp/1466598646"><img src="/assets/book_covers/book_of_lenses.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book is the greatest book about game design I’ve ever read. It talks about a lot of different aspects of it and gives you “lenses” - a set of questions that you can ask yourself about your game to figure out what you want to make and things you have to consider. This book makes you think deeper about game design that you’ve thought before.</p>
+
+<h3 id="level-up-the-guide-to-great-video-game-design">Level Up! The Guide to Great Video Game Design</h3>
+
+<p><a href="https://www.amazon.com/Level-Guide-Great-Video-Design/dp/1118877160"><img src="/assets/book_covers/level_up_book.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book is less conventional and formal than Book of Lenses, but it’s amazing too! It is less theoretical and more practical, gives you lots of nice advice about world and level design, weapon and enemy creation and more. It’s full of hilarious humor and great examples from different games. It will definitely sparkle your creativity when you’ll read it.</p>
+
+<h3 id="game-feel-a-game-designers-guide-to-virtual-sensation">Game Feel: A Game Designer’s Guide to Virtual Sensation</h3>
+
+<p><a href="https://www.amazon.com/Game-Feel-Designers-Sensation-Kaufmann/dp/0123743281"><img src="/assets/book_covers/game_feel.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This is a book about controls and “feel” of the game. Some games feel fluid and responsive when some aren’t. The author explains what makes games feel good. Sometimes a book gets a bit repetitive and too low level, but if you want to learn a lot about the input, this book is a great reference.</p>
+
+<h2 id="post-mortems--books-about-development-of-games">Post mortems / books about development of games</h2>
+
+<h3 id="masters-of-doom-how-two-guys-created-an-empire-and-transformed-pop-culture">Masters of Doom: How Two Guys Created an Empire and Transformed Pop Culture</h3>
+
+<p><a href="https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"><img src="/assets/book_covers/masters_of_doom.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This book tells us a story of ID Software starting from it’s early days. If you’re a Doom or Quake fan, you should definitely read it, but even if you aren’t: you’ll still be interested, as the author writes exciting story about ID’s rise in game industry and about development of Doom and Quake. Fantastic read.</p>
+
+<h3 id="postmortems-from-game-developer">Postmortems From Game Developer</h3>
+
+<p><a href="https://www.amazon.com/Postmortems-Game-Developer-Developers-Top-Selling/dp/1578202140"><img src="/assets/book_covers/postmortems_from_game_developer.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This books features great collection of postmortems from people who directly worked on the games. There are some details about development and trivia about the games themselves. The games which are talked about are classics: Deus Ex, Diablo II, Thief, Unreal Tournament and more. And by the way, a great way to learn is by seeing mistakes of other people, so it’s not only interesting book about games, but a great way to learn about how things can go wrong and what can be done to avoid this.</p>
+
+<h3 id="half-life-2-raising-the-bar">Half-Life 2: Raising the Bar</h3>
+
+<p><a href="https://www.amazon.com/Half-Life-2-Raising-David-Hodgson/dp/0761543643"><img src="/assets/book_covers/raising_the_bar.jpg" style="width:205px;height:270px;" /></a></p>
+
+<p>This is a book about development of Half Life 2. Full of development screenshots, interesting facts about different aspects of its development, interviews with developers… it’s awesome!</p>
+
+<h3 id="resources-3">Resources</h3>
+
+<ul>
+  <li><a href="https://www.reddit.com/r/TheMakingOfGames/">/r/TheMakingOfGames</a> - postmortems, documentaries, podcasts about making of awesome games</li>
+  <li><a href="http://www.pixelprospector.com/the-big-list-of-video-game-documentaries/">The Big List of Video Game Documentaries</a></li>
+  <li><a href="http://www.imdb.com/title/tt1942884/">Indie Game: The Movie</a> - a great documentary about indie games.</li>
+</ul>
+
+  </div>
+
+</article>
+
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>

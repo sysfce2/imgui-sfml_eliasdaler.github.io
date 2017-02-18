@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Using ImGui with modern C++ and STL for creating awesome game dev tools. Part 2. Some tips and tricks. &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using ImGui with modern C++ and STL for creating awesome game dev tools. Part 2. Some tips and tricks.</h1>
+    <span class="post-meta"><time datetime="2016-07-21T20:34:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 21, 2016</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Tutorial" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Tutorial</a></li>
+  
+    <li><a href="/tags#SFML" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> SFML</a></li>
+  
+    <li><a href="/tags#ImGui" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> ImGui</a></li>
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#STL" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> STL</a></li>
+  
+</ul>
+  </header>
+  <hr>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Hello, welcome to my second article about ImGui! This article is a collection of useful things, hacks and other stuff I’ve found while using ImGui. Mostly it’s focused on using modern C++ and some parts of STL with ImGui.</p>
+
+<p class="message">If you use SFML and want to learn how to use it with ImGui, use <i class="fa fa-github" aria-hidden="true"></i><a href="https://github.com/eliasdaler/imgui-sfml">my binding</a> and refer to <a href="https://eliasdaler.github.io/using-imgui-with-sfml-pt1">this tutorial</a> about setting it up!</p>
+
+<p><img src="https://eliasdaler.files.wordpress.com/2016/05/examples_01.png?w=662" alt="ImGui widgets" style="display:block; margin: 0 auto;" /></p>
+<p style="text-align: center;"><i>Different ImGui widgets (taken from ImGui's github page)</i></p>
+
+<!--more-->
+<p><a class="anchor" id="read-more"></a></p>
+
+<h1 id="contents">Contents</h1>
+
+<ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#imgui-demo-window">ImGui Demo Window</a></li>
+    <li><a href="#labels">Labels</a></li>
+    <li><a href="#getting-back-to-the-context-of-the-window-tree-etc">Getting back to the context of the window, tree, etc.</a></li>
+    <li><a href="#inputfloatn--struct">InputFloatN + struct</a></li>
+    <li><a href="#using-imgui-with-stl">Using ImGui with STL</a></li>
+    <ul>
+        <li><a href="#arrays">Arrays</a></li>
+        <li><a href="#combobox-listbox">ComboBox, ListBox</a></li>
+        <li><a href="#inputtext-and-stdstring">InputText and std::string</a></li>
+    </ul>
+    <li><a href="#callbacks">Callbacks</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+<hr />
+
+<h1 id="introduction">Introduction</h1>
+
+<p>If you didn’t read <a href="https://eliasdaler.github.io/using-imgui-with-sfml-pt1">the first article</a>, here’s a short recap to get you started.</p>
+
+<p><i class="fa fa-github" aria-hidden="true"></i><a href="https://github.com/ocornut/imgui">Dear ImGui</a> is an amazing library which can be used to create fast GUI for your game dev (and not only!) tools in very short amount of time. The resulting code is very simple to use and modify, you don’t have to store GUI widgets or register callbacks. Here’s some stuff that I’ve made in ImGui for <a href="http://en.sfml-dev.org/forums/index.php?topic=18062.0">my game</a>:</p>
+
+<p><img src="https://i2.wp.com/i.imgur.com/iQibpSk.gif" alt="Level editor" style="display:block; margin: 0 auto;" /></p>
+<p style="text-align: center;"><i>Level Editor</i></p>
+
+<p><br />
+<img src="https://i0.wp.com/i.imgur.com/A44zLlb.gif" alt="Animation editor" style="display:block; margin: 0 auto;" /></p>
+<p style="text-align: center;"><i>Animation editor</i></p>
+
+<p>Okay, enough of intros, let’s get right to tips.</p>
+
+<h1 id="imgui-demo-window">ImGui demo window</h1>
+
+<p>First of all, it’s very useful to check out ImGui test window and its source to see how various things can be done. You have to add <strong>imgui_demo.cpp</strong> to your build and then call <code class="highlighter-rouge">ImGui::ShowTestWindow</code> to show the window. Because there are so many examples, I won’t go over them and just focus on other stuff.</p>
+
+<h1 id="labels">Labels</h1>
+
+<p>Labels are used in ImGui as unique IDs for widgets. You shouldn’t use same labels for two different widgets as it will introduce collisions between widgets and that will lead to some unwanted behavior.</p>
+
+<p>Suppose you have two buttons with label “Meow” and you have a code like this:</p>
+
+<pre class="vs-code"><span class="keyword">if</span> <span class="operator">(</span><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Button</span><span class="operator">(</span><span class="string">&quot;Meow&quot;</span><span class="operator">))</span> <span class="operator">{</span>
+    <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppGlobalVariable">cout</span> <span class="cppOperator">&lt;&lt;</span> <span class="string">&quot;Meow\n&quot;</span><span class="operator">;</span>
+<span class="operator">}</span>
+
+<span class="keyword">if</span> <span class="operator">(</span><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Button</span><span class="operator">(</span><span class="string">&quot;Meow&quot;</span><span class="operator">))</span> <span class="operator">{</span>
+    <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppGlobalVariable">cout</span> <span class="cppOperator">&lt;&lt;</span> <span class="string">&quot;Purr\n&quot;</span><span class="operator">;</span>
+<span class="operator">}</span></pre>
+
+<p>The first button works as expected, but the second doesn’t work at all! These are the things that can happen when collisions occur between IDs. This won’t happen most of the time, after all there’s mostly no need to place two buttons which say the same thing in one window. But what if you <em>really</em> need these two “Meow” buttons? The solution is simple: you just have to add “##” and some stuff after that to resolve the collision:</p>
+
+<pre class="vs-code"><span class="keyword">if</span> <span class="operator">(</span><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Button</span><span class="operator">(</span><span class="string">&quot;Meow&quot;</span><span class="operator">))</span> <span class="operator">{</span>
+    <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppGlobalVariable">cout</span> <span class="cppOperator">&lt;&lt;</span> <span class="string">&quot;Meow\n&quot;</span><span class="operator">;</span>
+<span class="operator">}</span>
+
+<span class="keyword">if</span> <span class="operator">(</span><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Button</span><span class="operator">(</span><span class="string">&quot;Meow##Second&quot;</span><span class="operator">))</span> <span class="operator">{</span>
+    <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppGlobalVariable">cout</span> <span class="cppOperator">&lt;&lt;</span> <span class="string">&quot;Purr\n&quot;</span><span class="operator">;</span>
+<span class="operator">}</span></pre>
+
+<p>All the text after “##” is not displayed and only used to give unique IDs to widgets with same labels.
+IDs should be unique in the same scope, so it’s okay to have two widgets with the same label in two different windows or have one of them in some tree or list (trees, lists and some other widgets have their own scopes, so collisions won’t happen between items in them and other items).</p>
+
+<p>Let’s look at another situation. Suppose you have an array of <code class="highlighter-rouge">int</code>s:</p>
+<pre class="vs-code"><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType - keyword - (TRANSIENT)">array</span><span class="operator">&lt;</span><span class="keyword">int</span><span class="operator">,</span> <span class="number">10</span><span class="operator">&gt;</span> <span class="cppLocalVariable">arr</span> <span class="operator">=</span> <span class="operator">{</span> <span class="number">0</span> <span class="operator">};</span>
+</pre>
+
+<p>And now you want to create a bunch of <code class="highlighter-rouge">InputInt</code> widgets for each array element. <code class="highlighter-rouge">ImGui::PushID</code>/<code class="highlighter-rouge">PopID</code> come to the rescue! You can push <code class="highlighter-rouge">int</code>s, <code class="highlighter-rouge">const char*</code> or <code class="highlighter-rouge">void*</code> as IDs which will be appended to the label of the next created widget (but won’t be shown). For example, you can do this:</p>
+
+<pre class="vs-code"><span class="keyword">for</span> <span class="operator">(</span><span class="keyword">int</span> <span class="cppLocalVariable">i</span> <span class="operator">=</span> <span class="number">0</span><span class="operator">;</span> <span class="cppLocalVariable">i</span> <span class="operator">&lt;</span> <span class="cppLocalVariable">arr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">();</span> <span class="operator">++</span><span class="cppLocalVariable">i</span><span class="operator">)</span> <span class="operator">{</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PushID</span><span class="operator">(</span><span class="cppLocalVariable">i</span><span class="operator">);</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputInt</span><span class="operator">(</span><span class="string">&quot;##&quot;</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppLocalVariable">arr</span><span class="cppMemberOperator">[</span><span class="cppLocalVariable">i</span><span class="cppMemberOperator">]</span><span class="operator">);</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PopID</span><span class="operator">();</span>
+<span class="operator">}</span></pre>
+
+<p>There are some situations where you don’t have an <code class="highlighter-rouge">int</code> which you can use as part of ID, for example if you want to use for-ranged loop with the <code class="highlighter-rouge">std::array</code>. In that case, you can use pointers to elements of the array which will be unique:</p>
+<pre class="vs-code"><span class="keyword">for</span> <span class="operator">(</span><span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">elem</span> <span class="operator">:</span> <span class="cppLocalVariable">arr</span><span class="operator">)</span> <span class="operator">{</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PushID</span><span class="operator">(&amp;</span><span class="cppLocalVariable">elem</span><span class="operator">);</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputInt</span><span class="operator">(</span><span class="string">&quot;##&quot;</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppLocalVariable">elem</span><span class="operator">);</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PopID</span><span class="operator">();</span>
+<span class="operator">}</span></pre>
+
+<h1 id="getting-back-to-the-context-of-the-window-tree-etc">Getting back to the context of the window, tree, etc.</h1>
+
+<p>Suppose that you need to add some stuff to the window you’ve created before but you already called <code class="highlighter-rouge">ImGui::End</code>. No problem, just call <code class="highlighter-rouge">ImGui::Begin</code> with the name of the window in which you want to append stuff. Here’s an example:</p>
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Begin</span><span class="operator">(</span><span class="string">&quot;First window&quot;</span><span class="operator">);</span> <span class="comment">// begin first window</span>
+<span class="comment">// some stuff</span>
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">End</span><span class="operator">();</span>
+
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Begin</span><span class="operator">(</span><span class="string">&quot;Another window&quot;</span><span class="operator">);</span> <span class="comment">// begin second window</span>
+<span class="comment">// some another stuff</span>
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">End</span><span class="operator">();</span>
+
+<span class="comment">// oops, forgot to add some stuff!</span>
+<span class="comment">// let&#39;s go back to the context of the first window</span>
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">Begin</span><span class="operator">(</span><span class="string">&quot;First window&quot;</span><span class="operator">);</span>
+<span class="comment">// forgotten stuff</span>
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">End</span><span class="operator">();</span></pre>
+
+<h1 id="inputfloatn--struct">InputFloatN + struct</h1>
+
+<p>Sometimes it’s useful to use <code class="highlighter-rouge">InputFloat2</code> or <code class="highlighter-rouge">InputFloat4</code> with your point or rectangle structs which can be defined like this:</p>
+
+<pre class="vs-code"><span class="keyword">struct</span> <span class="cppType">Point</span> <span class="operator">{</span>
+    <span class="keyword">float</span> <span class="cppMemberField">x</span><span class="operator">;</span>
+    <span class="keyword">float</span> <span class="cppMemberField">y</span><span class="operator">;</span>
+<span class="operator">};</span>
+
+<span class="keyword">struct</span> <span class="cppType">Rect</span> <span class="operator">{</span>
+    <span class="keyword">float</span> <span class="cppMemberField">x</span><span class="operator">;</span>
+    <span class="keyword">float</span> <span class="cppMemberField">y</span><span class="operator">;</span>
+    <span class="keyword">float</span> <span class="cppMemberField">w</span><span class="operator">;</span>
+    <span class="keyword">float</span> <span class="cppMemberField">h</span><span class="operator">;</span>
+<span class="operator">};</span></pre>
+
+<p>Using them with <code class="highlighter-rouge">InputFloat2</code> or <code class="highlighter-rouge">InputFloat4</code> is easy:</p>
+
+<pre class="vs-code"><span class="cppType">Point</span> <span class="cppLocalVariable">p</span><span class="operator">{</span> <span class="number">0.f</span><span class="operator">,</span> <span class="number">0.f</span> <span class="operator">};</span>
+<span class="cppType">Rect</span> <span class="cppLocalVariable">r</span><span class="operator">{</span> <span class="number">0.f</span><span class="operator">,</span> <span class="number">0.f</span><span class="operator">,</span> <span class="number">0.f</span><span class="operator">,</span> <span class="number">0.f</span> <span class="operator">};</span></pre>
+
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputFloat2</span><span class="operator">(</span><span class="string">&quot;Point&quot;</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppLocalVariable">p</span><span class="operator">.</span><span class="cppMemberField">x</span><span class="operator">);</span>
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputFloat4</span><span class="operator">(</span><span class="string">&quot;Rect&quot;</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppLocalVariable">r</span><span class="operator">.</span><span class="cppMemberField">x</span><span class="operator">);</span></pre>
+
+<p>This works because both <code class="highlighter-rouge">Point</code> and <code class="highlighter-rouge">Rect</code> structs are <a href="http://en.cppreference.com/w/cpp/concept/PODType">POD</a> and don’t have “holes” in them, so the data they store is contiguous and can be interpreted as array of floats.</p>
+
+<p>This method is not very safe, of course, so use it at your own risk. Someone can modify the struct and this may break your code which assumed that the floats you want to modify are stored contiguously. Unfortunately, there’s no way to pass array of pointers to <code class="highlighter-rouge">InputFloat2</code> or <code class="highlighter-rouge">InputFloat4</code>, but you can easily create your own solution. Let’s make a function which creates a widget similar to <code class="highlighter-rouge">InputFloat4</code> and uses members of <code class="highlighter-rouge">Rect</code> struct explicitly:</p>
+
+<pre class="vs-code"><span class="keyword">namespace</span> <span class="cppNamespace">ImGui</span> <span class="operator">{</span>
+
+<span class="keyword">bool</span> <span class="cppFunction">InputRect</span><span class="operator">(</span><span class="keyword">const</span> <span class="keyword">char</span><span class="operator">*</span> <span class="cppParameter">label</span><span class="operator">,</span> <span class="cppType">Rect</span><span class="operator">*</span> <span class="cppParameter">rectPtr</span><span class="operator">,</span>
+    <span class="keyword">int</span> <span class="cppParameter">decimal_precision</span> <span class="operator">=</span> <span class="operator">-</span><span class="number">1</span><span class="operator">,</span> <span class="cppType">ImGuiInputTextFlags</span> <span class="cppParameter">extra_flags</span> <span class="operator">=</span> <span class="number">0</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PushID</span><span class="operator">(</span><span class="cppParameter">label</span><span class="operator">);</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">BeginGroup</span><span class="operator">();</span>
+
+    <span class="keyword">bool</span> <span class="cppLocalVariable">valueChanged</span> <span class="operator">=</span> <span class="keyword">false</span><span class="operator">;</span>
+
+    <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType - keyword - (TRANSIENT)">array</span><span class="operator">&lt;</span><span class="keyword">float</span><span class="operator">*,</span> <span class="number">4</span><span class="operator">&gt;</span> <span class="cppLocalVariable">arr</span> <span class="operator">=</span> <span class="operator">{</span> <span class="operator">&amp;</span><span class="cppParameter">rectPtr</span><span class="operator">-&gt;</span><span class="cppMemberField">x</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppParameter">rectPtr</span><span class="operator">-&gt;</span><span class="cppMemberField">y</span><span class="operator">,</span>
+                                  <span class="operator">&amp;</span><span class="cppParameter">rectPtr</span><span class="operator">-&gt;</span><span class="cppMemberField">w</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppParameter">rectPtr</span><span class="operator">-&gt;</span><span class="cppMemberField">h</span> <span class="operator">};</span>
+
+    <span class="keyword">for</span> <span class="operator">(</span><span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">elem</span> <span class="operator">:</span> <span class="cppLocalVariable">arr</span><span class="operator">)</span> <span class="operator">{</span>
+        <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PushID</span><span class="operator">(</span><span class="cppLocalVariable">elem</span><span class="operator">);</span>
+        <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PushItemWidth</span><span class="operator">(</span><span class="number">64.f</span><span class="operator">);</span>
+        <span class="cppLocalVariable">valueChanged</span> <span class="operator">|=</span> <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputFloat</span><span class="operator">(</span><span class="string">&quot;##arr&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">elem</span><span class="operator">,</span> <span class="number">0</span><span class="operator">,</span> <span class="number">0</span><span class="operator">,</span>
+            <span class="cppParameter">decimal_precision</span><span class="operator">,</span> <span class="cppParameter">extra_flags</span><span class="operator">);</span>
+        <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PopID</span><span class="operator">();</span>
+        <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">SameLine</span><span class="operator">();</span>
+    <span class="operator">}</span>
+
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">SameLine</span><span class="operator">();</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">TextUnformatted</span><span class="operator">(</span><span class="cppParameter">label</span><span class="operator">);</span>
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">EndGroup</span><span class="operator">();</span>
+
+    <span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">PopID</span><span class="operator">();</span> <span class="comment">// pop label id;</span>
+
+    <span class="keyword">return</span> <span class="cppLocalVariable">valueChanged</span><span class="operator">;</span>
+<span class="operator">}</span></pre>
+<p>And now you can do this:</p>
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputRect</span><span class="operator">(</span><span class="string">&quot;Rect&quot;</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppLocalVariable">r</span><span class="operator">);</span>
+</pre>
+
+<h1 id="using-imgui-with-stl">Using ImGui with STL</h1>
+
+<p>There are lots of things to be said about using ImGui with STL. ImGui doesn’t use STL at all and users have to pass raw arrays and <code class="highlighter-rouge">const char*</code>s instead of <code class="highlighter-rouge">std::vector</code>s and <code class="highlighter-rouge">std::string</code>s, so you can’t just use STL and some modern C++ right away, but it can be done with some work.</p>
+
+<h2 id="arrays">Arrays</h2>
+
+<p>Some widgets require you to use raw arrays but those are not the best because you can’t use them with algorithms, for ranged loops, etc. And the other problem is that you have to manage the memory of variable size arrays yourself using <code class="highlighter-rouge">new</code> and <code class="highlighter-rouge">delete</code>. Using <code class="highlighter-rouge">std::array</code> with <code class="highlighter-rouge">Imgui::InputInt4</code> which expects you to pass raw array is easy, just do it like this:</p>
+<pre class="vs-code"><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType - keyword - (TRANSIENT)">array</span><span class="operator">&lt;</span><span class="keyword">int</span><span class="operator">,</span> <span class="number">4</span><span class="operator">&gt;</span> <span class="cppLocalVariable">arr2</span> <span class="operator">=</span> <span class="operator">{</span> <span class="number">0</span> <span class="operator">};</span>
+</pre>
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputInt4</span><span class="operator">(</span><span class="string">&quot;IntRect&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">arr2</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">());</span>
+</pre>
+
+<p><code class="highlighter-rouge">std::array::data</code> returns a pointer to raw int array which can be passed to <code class="highlighter-rouge">ImGui::InputInt4</code>.</p>
+
+<p>The same can be done with <code class="highlighter-rouge">std::vector</code>s which are guaranteed to be contiguous, so you can just use <code class="highlighter-rouge">std::vector::data</code> the same way:</p>
+
+<pre class="vs-code"><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">vector</span><span class="operator">&lt;</span><span class="keyword">int</span><span class="operator">&gt;</span> <span class="cppLocalVariable">arr3</span><span class="operator">(</span><span class="number">4</span><span class="operator">,</span> <span class="number">0</span><span class="operator">);</span>
+</pre>
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputInt4</span><span class="operator">(</span><span class="string">&quot;IntRect&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">arr3</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">());</span>
+</pre>
+
+<h2 id="combobox-listbox">ComboBox, ListBox</h2>
+<p><code class="highlighter-rouge">ComboBox</code> and <code class="highlighter-rouge">ListBox</code> can be used with arrays of <code class="highlighter-rouge">const char</code>s, but what if you have <code class="highlighter-rouge">std::vector&lt;std::string&gt;</code> instead? You have to redefine callback which ImGui calls to get next item of the array. Here’s how you can write <code class="highlighter-rouge">Combo</code> and <code class="highlighter-rouge">ListBox</code> wrappers for <code class="highlighter-rouge">std::vector&lt;std::string&gt;</code>:</p>
+
+<pre class="vs-code"><span class="keyword">namespace</span> <span class="cppNamespace">ImGui</span>
+<span class="operator">{</span>
+<span class="keyword">static</span> <span class="keyword">auto</span> <span class="cppGlobalVariable">vector_getter</span> <span class="operator">=</span> <span class="operator">[](</span><span class="keyword">void</span><span class="operator">*</span> <span class="cppParameter">vec</span><span class="operator">,</span> <span class="keyword">int</span> <span class="cppParameter">idx</span><span class="operator">,</span> <span class="keyword">const</span> <span class="keyword">char</span><span class="operator">**</span> <span class="cppParameter">out_text</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">vector</span> <span class="operator">=</span> <span class="operator">*</span><span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">vector</span><span class="operator">&lt;</span><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">string</span><span class="operator">&gt;*&gt;(</span><span class="cppParameter">vec</span><span class="operator">);</span>
+    <span class="keyword">if</span> <span class="operator">(</span><span class="cppParameter">idx</span> <span class="operator">&lt;</span> <span class="number">0</span> <span class="operator">||</span> <span class="cppParameter">idx</span> <span class="operator">&gt;=</span> <span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="keyword">int</span><span class="operator">&gt;(</span><span class="cppLocalVariable">vector</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">()))</span> <span class="operator">{</span> <span class="keyword">return</span> <span class="keyword">false</span><span class="operator">;</span> <span class="operator">}</span>
+    <span class="operator">*</span><span class="cppParameter">out_text</span> <span class="operator">=</span> <span class="cppLocalVariable">vector</span><span class="operator">.</span><span class="cppMemberFunction">at</span><span class="operator">(</span><span class="cppParameter">idx</span><span class="operator">).</span><span class="cppMemberFunction">c_str</span><span class="operator">();</span>
+    <span class="keyword">return</span> <span class="keyword">true</span><span class="operator">;</span>
+<span class="operator">};</span>
+
+<span class="keyword">bool</span> <span class="cppFunction">Combo</span><span class="operator">(</span><span class="keyword">const</span> <span class="keyword">char</span><span class="operator">*</span> <span class="cppParameter">label</span><span class="operator">,</span> <span class="keyword">int</span><span class="operator">*</span> <span class="cppParameter">currIndex</span><span class="operator">,</span> <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">vector</span><span class="operator">&lt;</span><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">string</span><span class="operator">&gt;&amp;</span> <span class="cppParameter">values</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="keyword">if</span> <span class="operator">(</span><span class="cppParameter">values</span><span class="operator">.</span><span class="cppMemberFunction">empty</span><span class="operator">())</span> <span class="operator">{</span> <span class="keyword">return</span> <span class="keyword">false</span><span class="operator">;</span> <span class="operator">}</span>
+    <span class="keyword">return</span> <span class="cppFunction">Combo</span><span class="operator">(</span><span class="cppParameter">label</span><span class="operator">,</span> <span class="cppParameter">currIndex</span><span class="operator">,</span> <span class="cppGlobalVariable">vector_getter</span><span class="operator">,</span>
+        <span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="keyword">void</span><span class="operator">*&gt;(&amp;</span><span class="cppParameter">values</span><span class="operator">),</span> <span class="cppParameter">values</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">());</span>
+<span class="operator">}</span>
+
+<span class="keyword">bool</span> <span class="cppFunction">ListBox</span><span class="operator">(</span><span class="keyword">const</span> <span class="keyword">char</span><span class="operator">*</span> <span class="cppParameter">label</span><span class="operator">,</span> <span class="keyword">int</span><span class="operator">*</span> <span class="cppParameter">currIndex</span><span class="operator">,</span> <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">vector</span><span class="operator">&lt;</span><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">string</span><span class="operator">&gt;&amp;</span> <span class="cppParameter">values</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="keyword">if</span> <span class="operator">(</span><span class="cppParameter">values</span><span class="operator">.</span><span class="cppMemberFunction">empty</span><span class="operator">())</span> <span class="operator">{</span> <span class="keyword">return</span> <span class="keyword">false</span><span class="operator">;</span> <span class="operator">}</span>
+    <span class="keyword">return</span> <span class="cppFunction">ListBox</span><span class="operator">(</span><span class="cppParameter">label</span><span class="operator">,</span> <span class="cppParameter">currIndex</span><span class="operator">,</span> <span class="cppGlobalVariable">vector_getter</span><span class="operator">,</span>
+        <span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="keyword">void</span><span class="operator">*&gt;(&amp;</span><span class="cppParameter">values</span><span class="operator">),</span> <span class="cppParameter">values</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">());</span>
+<span class="operator">}</span>
+
+<span class="operator">}</span></pre>
+
+<p>Ugh, that’s not the prettiest code, but it works. We store pointer to our vector in <code class="highlighter-rouge">void*</code> and cast it back to vector in our lambda. What’s good about that code is that we don’t create any copies of strings and just use <code class="highlighter-rouge">const char</code> pointers stored in <code class="highlighter-rouge">std::string</code>s from our <code class="highlighter-rouge">std::vector</code>.</p>
+
+<h2 id="inputtext-and-stdstring">InputText and std::string</h2>
+
+<p>ImGui lets you pass char array in <code class="highlighter-rouge">InputText</code> and then it modifies it when user enters some text in the input field. The problem is that it’s hard to know the size of input in advance, so you have to allocate large enough buffer and then pass it in <code class="highlighter-rouge">InputText</code>.</p>
+
+<p>We can use <code class="highlighter-rouge">std::vector&lt;char&gt;</code> as our buffer instead of using raw arrays. If the size of buffer is known at compile time, you can use <code class="highlighter-rouge">std::array&lt;char, N&gt;</code>, where <code class="highlighter-rouge">N</code> is the size of the buffer.</p>
+
+<p>You can then create <code class="highlighter-rouge">std::string</code> from your buffer like this:</p>
+<pre class="vs-code"><span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">string</span> <span class="cppLocalVariable">str</span> <span class="operator">=</span> <span class="cppLocalVariable">arr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">();</span>
+</pre>
+<p>One of <code class="highlighter-rouge">std::string</code> constructors takes <code class="highlighter-rouge">const char*</code> so we get it by calling <code class="highlighter-rouge">data</code>.</p>
+
+<p class="message">Be careful when using <code>std::string</code> as input buffer! Sure, you can always call <code>std::string::resize</code> and allocate enough space, but don't use it in string handling code, because the string may contain zeros or trash and this can lead to some nasty bugs. The size of the string may not be what you expect. Moreover, when ImGui changes <code>std::string</code>'s internal char array, it doesn't modify it's size which can be another source of hard bugs.</p>
+
+<h2 id="callbacks">Callbacks</h2>
+
+<p>ImGui lets you add callbacks to different widgets. Let’s make a silly callback which replaces all user input with char ‘A’.</p>
+
+<p>First you define a free function:</p>
+
+<pre class="vs-code"><span class="keyword">int</span> <span class="cppFunction">callback</span><span class="operator">(</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">EventChar</span> <span class="operator">=</span> <span class="string">&#39;A&#39;</span><span class="operator">;</span>
+    <span class="keyword">return</span> <span class="number">0</span><span class="operator">;</span>
+<span class="operator">}</span></pre>
+<p>And then pass it to <code class="highlighter-rouge">InputText</code>:</p>
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputText</span><span class="operator">(</span><span class="string">&quot;Text&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">(),</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">(),</span>
+    <span class="cppEnumerator">ImGuiInputTextFlags_CallbackCharFilter</span><span class="operator">,</span> <span class="cppFunction">callback</span><span class="operator">);</span></pre>
+
+<p>You can also use stateless lambdas which can be used just as free functions:</p>
+
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputText</span><span class="operator">(</span><span class="string">&quot;Text&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">(),</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">(),</span>
+    <span class="cppEnumerator">ImGuiInputTextFlags_CallbackCharFilter</span><span class="operator">,</span>
+    <span class="operator">[](</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span>
+    <span class="operator">{</span>
+        <span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">EventChar</span> <span class="operator">=</span> <span class="string">&#39;A&#39;</span><span class="operator">;</span>
+        <span class="keyword">return</span> <span class="number">0</span><span class="operator">;</span>
+    <span class="operator">}</span>
+<span class="operator">);</span></pre>
+
+<p>Suppose we don’t want to hard-code replacement character and want to use a char variable instead. We can’t capture the state in our lambda (it can’t be used as a free function), so we store the pointer to char in <code class="highlighter-rouge">ImGuiTextEditCallbackData::UserData</code>:</p>
+
+<pre class="vs-code"><span class="keyword">const</span> <span class="keyword">char</span> <span class="cppLocalVariable">replacementChar</span> <span class="operator">=</span> <span class="string">&#39;A&#39;</span><span class="operator">;</span>
+</pre>
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputText</span><span class="operator">(</span><span class="string">&quot;Text2&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">(),</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">(),</span>
+    <span class="cppEnumerator">ImGuiInputTextFlags_CallbackCharFilter</span><span class="operator">,</span>
+    <span class="operator">[](</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span>
+    <span class="operator">{</span>
+        <span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">EventChar</span> <span class="operator">=</span> <span class="operator">*</span><span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="keyword">const</span> <span class="keyword">char</span><span class="operator">*&gt;(</span><span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">UserData</span><span class="operator">);</span>
+        <span class="keyword">return</span> <span class="number">0</span><span class="operator">;</span>
+    <span class="operator">},</span>
+    <span class="keyword">const_cast</span><span class="operator">&lt;</span><span class="keyword">char</span><span class="operator">*&gt;(&amp;</span><span class="cppLocalVariable">replacementChar</span><span class="operator">));</span></pre>
+
+<p>Not bad, but capturing the state is so much prettier! And what if you wanted to pass more than one variable? This would get much harder, so I’ll show you how to use lambdas with state with ImGui!</p>
+
+<p>Let’s define our own function which will lets us pass lambdas with state:</p>
+
+<pre class="vs-code"><span class="keyword">namespace</span> <span class="cppNamespace">ImGui</span> <span class="operator">{</span>
+
+<span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="cppType">F</span><span class="operator">&gt;</span>
+<span class="keyword">bool</span> <span class="cppFunctionTemplate">InputTextCool</span><span class="operator">(</span><span class="keyword">const</span> <span class="keyword">char</span><span class="operator">*</span> <span class="cppParameter">label</span><span class="operator">,</span> <span class="keyword">char</span><span class="operator">*</span> <span class="cppParameter">buf</span><span class="operator">,</span> <span class="cppType">size_t</span> <span class="cppParameter">buf_size</span><span class="operator">,</span>
+    <span class="cppType">ImGuiInputTextFlags</span> <span class="cppParameter">flags</span> <span class="operator">=</span> <span class="number">0</span><span class="operator">,</span>
+    <span class="cppType">F</span> <span class="cppParameter">callback</span> <span class="operator">=</span> <span class="keyword">nullptr</span><span class="operator">,</span> <span class="keyword">void</span><span class="operator">*</span> <span class="cppParameter">user_data</span> <span class="operator">=</span> <span class="keyword">nullptr</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="keyword">auto</span> <span class="cppLocalVariable">freeCallback</span> <span class="operator">=</span> <span class="operator">[](</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span> <span class="operator">{</span>
+        <span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">f</span> <span class="operator">=</span> <span class="operator">*</span><span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="cppType">F</span><span class="operator">*&gt;(</span><span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">UserData</span><span class="operator">);</span>
+        <span class="keyword">return</span> <span class="cppLocalVariable">f</span><span class="operator">(</span><span class="cppParameter">data</span><span class="operator">);</span>
+    <span class="operator">};</span>
+    <span class="keyword">return</span> <span class="identifier">InputText</span><span class="operator">(</span><span class="cppParameter">label</span><span class="operator">,</span> <span class="cppParameter">buf</span><span class="operator">,</span> <span class="cppParameter">buf_size</span><span class="operator">,</span> <span class="cppParameter">flags</span><span class="operator">,</span>
+        <span class="cppLocalVariable">freeCallback</span><span class="operator">,</span> <span class="operator">&amp;</span><span class="cppParameter">callback</span><span class="operator">);</span>
+<span class="operator">}</span>
+
+<span class="operator">}</span></pre>
+
+<p>Here’s how it works: we create another lambda which is stateless and calls our original lambda which is stored in <code class="highlighter-rouge">ImGuiTextEditCallbackData::UserData</code>. And now we can pass lambda with state like this:</p>
+
+<pre class="vs-code"><span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunctionTemplate">InputTextCool</span><span class="operator">(</span><span class="string">&quot;Text3&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">(),</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">(),</span>
+    <span class="cppEnumerator">ImGuiInputTextFlags_CallbackCharFilter</span><span class="operator">,</span>
+    <span class="operator">[&amp;</span><span class="cppLocalVariable">replacementChar</span><span class="operator">](</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span>
+    <span class="operator">{</span>
+        <span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">EventChar</span> <span class="operator">=</span> <span class="cppLocalVariable">replacementChar</span><span class="operator">;</span>
+        <span class="keyword">return</span> <span class="number">0</span><span class="operator">;</span>
+    <span class="operator">});</span></pre>
+
+<p>Nice! But we can do better, because if we want to do the same with other widgets, we have to do the same thing over and over again. So let’s generalize the approach. First of all, let’s create a function which returns stateless lambda from lambda with state:</p>
+
+<pre class="vs-code"><span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="cppType">F</span><span class="operator">&gt;</span>
+<span class="keyword">auto</span> <span class="cppFunctionTemplate">getFreeCallback</span><span class="operator">(</span><span class="cppType">F</span> <span class="cppParameter">f</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="keyword">return</span> <span class="operator">[](</span><span class="cppType">function_traits</span><span class="operator">&lt;</span><span class="cppType">F</span><span class="operator">&gt;::</span><span class="identifier">arg_t</span><span class="operator">&lt;</span><span class="number">0</span><span class="operator">&gt;</span> <span class="cppParameter">data</span><span class="operator">)</span> <span class="operator">{</span>
+        <span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">f</span> <span class="operator">=</span> <span class="operator">*</span><span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="cppType">F</span><span class="operator">*&gt;(</span><span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="identifier">UserData</span><span class="operator">);</span>
+        <span class="keyword">return</span> <span class="cppLocalVariable">f</span><span class="operator">(</span><span class="cppParameter">data</span><span class="operator">);</span>
+    <span class="operator">};</span>
+<span class="operator">}</span></pre>
+
+<p>This is the same approach we’ve used in <code class="highlighter-rouge">InputTextCool</code> function. <code class="highlighter-rouge">function_traits&lt;F&gt;::arg_t&lt;0&gt;</code> gets us the first argument of passed lambda. These traits can be defined like this:</p>
+
+<pre class="vs-code"><span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="cppType">T</span><span class="operator">&gt;</span>
+<span class="keyword">struct</span> <span class="cppClassTemplate">function_traits</span>
+    <span class="operator">:</span> <span class="keyword">public</span> <span class="cppType">function_traits</span><span class="operator">&lt;</span><span class="keyword">decltype</span><span class="operator">(&amp;</span><span class="cppType">T</span><span class="operator">::</span><span class="keyword">operator</span><span class="operator">())&gt;</span>
+<span class="operator">{};</span>
+
+<span class="keyword">template</span> <span class="operator">&lt;</span><span class="keyword">typename</span> <span class="cppType">ClassType</span><span class="operator">,</span> <span class="keyword">typename</span> <span class="cppType">ReturnType</span><span class="operator">,</span> <span class="keyword">typename</span><span class="operator">...</span> <span class="cppType">Args</span><span class="operator">&gt;</span>
+<span class="keyword">struct</span> <span class="cppClassTemplate">function_traits</span><span class="operator">&lt;</span><span class="cppType">ReturnType</span><span class="operator">(</span><span class="cppType">ClassType</span><span class="operator">::*)(</span><span class="cppType">Args</span><span class="operator">...)</span> <span class="keyword">const</span><span class="operator">&gt;</span>
+<span class="operator">{</span>
+    <span class="keyword">template</span> <span class="operator">&lt;</span><span class="cppType">size_t</span> <span class="identifier">i</span><span class="operator">&gt;</span>
+    <span class="keyword">using</span> <span class="cppClassTemplate">arg_t</span> <span class="operator">=</span> <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">tuple_element_t</span><span class="operator">&lt;</span><span class="identifier">i</span><span class="operator">,</span> <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">tuple</span><span class="operator">&lt;</span><span class="cppType">Args</span><span class="operator">...&gt;&gt;;</span>
+<span class="operator">};</span>
+</pre>
+
+<p>And now we can do this:</p>
+
+<pre class="vs-code"><span class="keyword">auto</span> <span class="cppLocalVariable">replacementLambda</span> <span class="operator">=</span> <span class="operator">[&amp;</span><span class="cppLocalVariable">replacementChar</span><span class="operator">](</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span>
+<span class="operator">{</span>
+    <span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">EventChar</span> <span class="operator">=</span> <span class="cppLocalVariable">replacementChar</span><span class="operator">;</span>
+    <span class="keyword">return</span> <span class="number">0</span><span class="operator">;</span>
+<span class="operator">};</span>
+
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputText</span><span class="operator">(</span><span class="string">&quot;Text4&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">(),</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">(),</span>
+    <span class="cppEnumerator">ImGuiInputTextFlags_CallbackCharFilter</span><span class="operator">,</span>
+    <span class="cppFunctionTemplate">getFreeCallback</span><span class="operator">(</span><span class="cppLocalVariable">replacementLambda</span><span class="operator">),</span> <span class="operator">&amp;</span><span class="cppLocalVariable">replacementLambda</span><span class="operator">);</span></pre>
+
+<p>We can do the same thing “inline” like this:</p>
+
+<pre class="vs-code"><span class="keyword">using</span> <span class="cppType">ReplacementLambdaType</span> <span class="operator">=</span> <span class="keyword">decltype</span><span class="operator">(</span><span class="cppLocalVariable">replacementLambda</span><span class="operator">);</span>
+<span class="cppNamespace">ImGui</span><span class="operator">::</span><span class="cppFunction">InputText</span><span class="operator">(</span><span class="string">&quot;Text5&quot;</span><span class="operator">,</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">data</span><span class="operator">(),</span> <span class="cppLocalVariable">textArr</span><span class="operator">.</span><span class="cppMemberFunction">size</span><span class="operator">(),</span>
+    <span class="cppEnumerator">ImGuiInputTextFlags_CallbackCharFilter</span><span class="operator">,</span>
+    <span class="operator">[](</span><span class="cppType">ImGuiTextEditCallbackData</span><span class="operator">*</span> <span class="cppParameter">data</span><span class="operator">)</span>
+    <span class="operator">{</span>
+        <span class="keyword">auto</span> <span class="cppLocalVariable">f</span> <span class="operator">=</span> <span class="operator">*</span><span class="keyword">static_cast</span><span class="operator">&lt;</span><span class="cppType">ReplacementLambdaType</span><span class="operator">*&gt;(</span><span class="cppParameter">data</span><span class="operator">-&gt;</span><span class="cppMemberField">UserData</span><span class="operator">);</span>
+        <span class="keyword">return</span> <span class="cppLocalVariable">f</span><span class="operator">(</span><span class="cppParameter">data</span><span class="operator">);</span>
+    <span class="operator">},</span> <span class="operator">&amp;</span><span class="cppLocalVariable">replacementLambda</span><span class="operator">);</span></pre>
+
+<p>Note that we had to store our lambda type in <code class="highlighter-rouge">ReplacementLambdaType</code> type alias to cast from <code class="highlighter-rouge">void*</code> later. This is almost the same as the previous approach (which I like more!).</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>ImGui is a wonderful library and it’s cool that you can easily expand it and use with all the stuff you like. There are some other tricks and tips I have to share, but this article got pretty big and so another part of this article will probably happen some day.</p>
+
+<p>If you want to know about something or have something to share, feel free to do it in comments, I’ll use it for the next article. See ya!</p>
+
+    <hr />
+    <p>Follow me on twitter <a href="https://twitter.com/EliasDaler">@EliasDaler</a> to not miss the new stuff!</p>
+  </div>
+
+</article>
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//eliasdaler-github-io.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>

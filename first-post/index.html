@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      New blog, new articles! &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">New blog, new articles!</h1>
+    <span class="post-meta"><time datetime="2016-07-07T14:50:20+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jul 7, 2016</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Announcements" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Announcements</a></li>
+  
+</ul>
+  </header>
+  <hr>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Hello and welcome to my new blog!
+After using my <a href="https://eliasdaler.wordpress.com/">old blog</a> for several years, I’ve decided that it’s time to move on. This blog is made with <strong>Jekyll</strong> and it’s currently hosted at <strong>GitHub</strong>, though eventually I plan to register proper domain for my site once I feel that the blog is good enough.</p>
+
+<p>I feel that having a minimalist blog with great customization is awesome and it will improve looks of my blog posts a lot. Just look at that beautiful code block, that’s how the code will look from now on:</p>
+
+<p>In Pygments:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="n">Entity</span><span class="o">::</span><span class="n">addComponent</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">componentName</span><span class="p">,</span> <span class="k">const</span> <span class="n">ScriptDataLoader</span><span class="o">&amp;</span> <span class="n">loader</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">auto</span><span class="o">&amp;</span> <span class="n">componentManager</span> <span class="o">=</span> <span class="n">engine_system</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">ComponentManager</span><span class="o">&gt;</span><span class="p">();</span>
+    <span class="k">auto</span> <span class="n">componentType</span> <span class="o">=</span> <span class="n">componentManager</span><span class="p">.</span><span class="n">getTypeIndex</span><span class="p">(</span><span class="n">componentName</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">hasComponent</span><span class="p">(</span><span class="n">componentType</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">auto</span><span class="o">&amp;</span> <span class="n">log</span> <span class="o">=</span> <span class="n">engine_system</span><span class="p">.</span><span class="n">get</span><span class="o">&lt;</span><span class="n">LogManager</span><span class="o">&gt;</span><span class="p">();</span>
+        <span class="n">log</span><span class="p">(</span><span class="n">LogManager</span><span class="o">::</span><span class="n">MessageType</span><span class="o">::</span><span class="n">Error</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">name</span> <span class="o">&lt;&lt;</span> <span class="s">": Component with type "</span> <span class="o">&lt;&lt;</span> <span class="n">componentName</span> <span class="o">&lt;&lt;</span> <span class="s">"already exists."</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">auto</span> <span class="n">c</span> <span class="o">=</span> <span class="n">componentManager</span><span class="p">.</span><span class="n">createComponent</span><span class="p">(</span><span class="n">componentType</span><span class="p">);</span>
+    <span class="n">componentManager</span><span class="p">.</span><span class="n">loadFromLua</span><span class="p">(</span><span class="n">componentType</span><span class="p">,</span> <span class="o">*</span><span class="n">c</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">loader</span><span class="p">);</span>
+    <span class="n">c</span><span class="o">-&gt;</span><span class="n">owner</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+    <span class="n">c</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">();</span>
+    <span class="n">addComponent</span><span class="p">(</span><span class="n">componentType</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>And this is a test of HTML markup from Visual Studio!</p>
+<pre class="vs-code">
+<span class="keyword">void</span> <span class="cppType">Entity</span><span class="operator">::</span><span class="cppMemberFunction">addComponent</span><span class="operator">(</span><span class="keyword">const</span> <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppType">string</span><span class="operator">&amp;</span> <span class="cppParameter">componentName</span><span class="operator">,</span> <span class="keyword">const</span> <span class="cppType">ScriptDataLoader</span><span class="operator">&amp;</span> <span class="cppParameter">loader</span><span class="operator">)</span> <span class="operator">
+{</span>
+    <span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">componentManager</span> <span class="operator">=</span> <span class="cppGlobalVariable">engine_system</span><span class="operator">.</span><span class="cppMemberFunction">get</span><span class="operator">&lt;</span><span class="cppType">ComponentManager</span><span class="operator">&gt;();</span>
+    <span class="keyword">auto</span> <span class="cppLocalVariable">componentType</span> <span class="operator">=</span> <span class="cppLocalVariable">componentManager</span><span class="operator">.</span><span class="cppMemberFunction">getTypeIndex</span><span class="operator">(</span><span class="cppParameter">componentName</span><span class="operator">);</span>
+    <span class="keyword">if</span> <span class="operator">(</span><span class="cppMemberFunction">hasComponent</span><span class="operator">(</span><span class="cppLocalVariable">componentType</span><span class="operator">))</span> <span class="operator">{</span>
+        <span class="keyword">auto</span><span class="operator">&amp;</span> <span class="cppLocalVariable">log</span> <span class="operator">=</span> <span class="cppGlobalVariable">engine_system</span><span class="operator">.</span><span class="cppMemberFunction">get</span><span class="operator">&lt;</span><span class="cppType">LogManager</span><span class="operator">&gt;();</span>
+        <span class="cppLocalVariable">log</span><span class="cppMemberOperator">(</span><span class="cppType">LogManager</span><span class="operator">::</span><span class="cppType">MessageType</span><span class="operator">::</span><span class="cppEnumerator">Error</span><span class="cppMemberOperator">)</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="cppMemberField">name</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="string">&quot;: Component with type &quot;</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="cppParameter">componentName</span> <span class="cppMemberOperator">&lt;&lt;</span> <span class="string">&quot;already exists.&quot;</span><span class="operator">;</span>
+        <span class="keyword">return</span><span class="operator">;</span>
+    <span class="operator">}</span>
+
+    <span class="keyword">auto</span> <span class="cppLocalVariable">c</span> <span class="operator">=</span> <span class="cppLocalVariable">componentManager</span><span class="operator">.</span><span class="cppMemberFunction">createComponent</span><span class="operator">(</span><span class="cppLocalVariable">componentType</span><span class="operator">);</span>
+    <span class="cppLocalVariable">componentManager</span><span class="operator">.</span><span class="cppMemberFunction">loadFromLua</span><span class="operator">(</span><span class="cppLocalVariable">componentType</span><span class="operator">,</span> <span class="cppMemberOperator">*</span><span class="cppLocalVariable">c</span><span class="operator">,</span> <span class="cppMemberField">name</span><span class="operator">,</span> <span class="cppParameter">loader</span><span class="operator">);</span>
+    <span class="cppLocalVariable">c</span><span class="cppMemberOperator">-&gt;</span><span class="cppMemberField">owner</span> <span class="operator">=</span> <span class="keyword">this</span><span class="operator">;</span>
+    <span class="cppLocalVariable">c</span><span class="cppMemberOperator">-&gt;</span><span class="cppMemberFunction">init</span><span class="operator">();</span>
+    <span class="cppMemberFunction">addComponent</span><span class="operator">(</span><span class="cppLocalVariable">componentType</span><span class="operator">,</span> <span class="cppNamespace">std</span><span class="operator">::</span><span class="cppFunction">move</span><span class="operator">(</span><span class="cppLocalVariable">c</span><span class="operator">));</span>
+<span class="operator">}</span>
+</pre>
+
+<p>There are some new articles coming soon and will be published on this blog, but first, let’s talk about it.</p>
+
+<!--more-->
+<p><a class="anchor" id="read-more"></a></p>
+
+<h2 id="why-i-created-a-new-blog">Why I created a new blog</h2>
+
+<p>There were several reasons for that:</p>
+
+<ul>
+  <li><strong>Not much customization was available</strong>. I was using free version of Wordpress which limited me with what I can do about the site. I wasn’t very happy about most of the free themes on the site and the one I was using was the best one for me, but there were still some small problems with it which I wanted to fix but wasn’t able to.</li>
+  <li><strong>Wordpress liked breaking my code</strong>. It kept inserting <code class="highlighter-rouge">&amp;lt;</code> and <code class="highlighter-rouge">&amp;gt;</code> instead of <code class="highlighter-rouge">&lt;</code> and <code class="highlighter-rouge">&gt;</code> and stuff like that. No matter what I’ve tried, it always ended up doing it, even if the code was inside <code class="highlighter-rouge">&lt;pre&gt;</code> or <code class="highlighter-rouge">&lt;code&gt;</code> tags! It was really awful and even a small fix in the article was hard to make because of that.</li>
+  <li><strong>No Lua highlighting</strong>. There was no support for Lua and for guy who writes so much about Lua it was really hard. I ended up using Python highlighting for most Lua code blocks but it wasn’t perfect.</li>
+  <li><strong>Disqus</strong>. I like Disqus very much, it’s better than Wordpress comment system and allows more people to comment on my articles.</li>
+  <li><strong>Source control</strong>. While Wordpress has source control system, it’s easier for me to use git for that. It wasn’t possible with free Wordpress account, of course.</li>
+</ul>
+
+<p>… and there are some other small reasons but I’ll stop at that.</p>
+
+<h2 id="future-plans">Future plans</h2>
+
+<p>There are several articles I plan to write and they’ll be published on this blog from now on:</p>
+
+<ul>
+  <li><strong>Using ImGui (with SFML) Part Two</strong>. This article will show some notable things about ImGui: some useful things, some hacks and tips about using it with modern C++ and STL.</li>
+  <li><strong>How I use modern C++</strong>. In this article I’ll show how I use modern C++ while developing my game and how it makes my code more readable and safer. I’ll also address some myths about modern C++ which are mostly result of ignorance or false claims coming from “C with classes” programmers.</li>
+  <li><strong>Using Lua with C++ series reboot</strong>. Yeah, it’s coming! Let’s talk a bit more about it.</li>
+</ul>
+
+<h2 id="using-lua-with-c-reboot">Using Lua with C++ reboot</h2>
+
+<p><img src="/assets/lua-logo.png" alt="Lua logo" style="display: block;margin: 0 auto;" /></p>
+
+<p>I wrote the first Lua/C++ articles almost three years ago! This was my first article which got really big and inspired me to continue writing lots of articles devoted to Lua and C++ integration.</p>
+
+<p>And now I feel like I need to re-write the tutorial series from the ground up because I’ve learned a lot during the last three years. I’ve also received lots of e-mails with different questions about Lua and C++ and I’ve noticed some things which need to be addressed and explained in detail.</p>
+
+<p>The series will start with me explaining why Lua is awesome and how it can be used in game development. I’ll start with explaining some things about how Lua works internally and how you can use Lua C API to interact with it. While there are some amazing Lua/C++ bindings out there, I feel that understanding how Lua and Lua C API work is very important and useful for using Lua efficiently.</p>
+
+<p>After some basic discussion the series will move on to practical examples of how I use Lua while developing <strong>Re:creation</strong>. During years of using Lua I’ve discovered some useful scripting patterns which will be explained in these articles.</p>
+
+<h2 id="feedback">Feedback</h2>
+
+<p>Thank you for your feedback about all my articles! As I’m writing new articles, please tell me what you want to see in Lua/C++ or modern C++ articles. Your opinion is very important to me and I’ll try to answer your questions about different stuff in my new articles. See you soon!</p>
+
+    <hr />
+    <p>Follow me on twitter <a href="https://twitter.com/EliasDaler">@EliasDaler</a> to not miss the new stuff!</p>
+  </div>
+
+</article>
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//eliasdaler-github-io.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>

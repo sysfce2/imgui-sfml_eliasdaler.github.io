@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Re:creation dev log. December 2016 - March 2017. &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Re:creation dev log. December 2016 - March 2017.</h1>
+    <span class="post-meta"><time datetime="2017-04-19T23:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Apr 19, 2017</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#Re%3Acreation" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Re:creation</a></li>
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#Dev+log" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Dev log</a></li>
+  
+</ul>
+  </header>
+  <hr>
+
+  <div class="post-content" itemprop="articleBody">
+    
+<p>No posts in four months! And I haven’t worked on the game for the last one and a half. Is the project dead? No! Let’s pretend that nothing happened and I’ll show what I did since December and will tell about my future plans in the end.</p>
+
+<p><img src="/assets/re_creation_dev_log_dec_march/child_parent.gif" alt="Child-parent example" /></p>
+
+<!--more-->
+<p><a class="anchor" id="read-more"></a></p>
+
+<h2 class="no_toc" id="table-of-contents">Table of contents</h2>
+
+<ul id="markdown-toc">
+  <li><a href="#lots-of-work-moving-everything-to-lua" id="markdown-toc-lots-of-work-moving-everything-to-lua">Lots of work! Moving everything to Lua</a></li>
+  <li><a href="#gui" id="markdown-toc-gui">GUI</a></li>
+  <li><a href="#some-small-c-related-refactorings" id="markdown-toc-some-small-c-related-refactorings">Some small C++ related refactorings</a></li>
+  <li><a href="#levels-and-tile-maps" id="markdown-toc-levels-and-tile-maps">Levels and tile maps</a></li>
+  <li><a href="#child-parent-hierarchy-and-relative-transforms" id="markdown-toc-child-parent-hierarchy-and-relative-transforms">Child-parent hierarchy and relative transforms</a></li>
+  <li><a href="#other-small-things" id="markdown-toc-other-small-things">Other small things</a></li>
+  <li><a href="#conclusion-and-plans" id="markdown-toc-conclusion-and-plans">Conclusion and plans</a></li>
+</ul>
+
+<h2 id="lots-of-work-moving-everything-to-lua">Lots of work! Moving everything to Lua</h2>
+
+<p>I moved a lot of code to Lua! For quite some time I thought that this didn’t make much sense or was very difficult, but turns out it’s easier as the more and more code gets moved to Lua. Here’s a comparison of lines of code between two dates.</p>
+
+<p><strong>27.11.2016</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Language</th>
+      <th style="text-align: left">files</th>
+      <th style="text-align: left">blank</th>
+      <th style="text-align: left">comment</th>
+      <th style="text-align: left">code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">C++</td>
+      <td style="text-align: left">103</td>
+      <td style="text-align: left">2420</td>
+      <td style="text-align: left">533</td>
+      <td style="text-align: left">13073</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Lua</td>
+      <td style="text-align: left">116</td>
+      <td style="text-align: left">510</td>
+      <td style="text-align: left">154</td>
+      <td style="text-align: left">5071</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">C/C++ header</td>
+      <td style="text-align: left">123</td>
+      <td style="text-align: left">1386</td>
+      <td style="text-align: left">158</td>
+      <td style="text-align: left">4315</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>22.02.2017</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Language</th>
+      <th style="text-align: left">files</th>
+      <th style="text-align: left">blank</th>
+      <th style="text-align: left">comment</th>
+      <th style="text-align: left">code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">C++</td>
+      <td style="text-align: left">109</td>
+      <td style="text-align: left">1938</td>
+      <td style="text-align: left">330</td>
+      <td style="text-align: left">10590</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Lua</td>
+      <td style="text-align: left">127</td>
+      <td style="text-align: left">706</td>
+      <td style="text-align: left">135</td>
+      <td style="text-align: left">5167</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">C/C++ header</td>
+      <td style="text-align: left">133</td>
+      <td style="text-align: left">1296</td>
+      <td style="text-align: left">90</td>
+      <td style="text-align: left">4014</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Note, that even though I’ve added a lot of new code, the resulting code is still smaller. And Lua code became larger just by 100 lines, even though I moved a lot of C++ code here! This may also look as a little work was done, but <code class="highlighter-rouge">git diff</code> between commits made in December and March results in this:</p>
+
+<pre>460 files changed, 14486 insertions(+), 16035 deletions(-)</pre>
+
+<p>That’s a lot of changes!</p>
+
+<p>All game-specific components are now in Lua. For example, inventory, health components and others can be implemented in Lua efficiently because I don’t have to iterate them in tight loops in every frame. They’re mostly used for some basic logic and data storage. Only the following components are implemented in C++ now: Transform, Hierarchy, Graphics, Movement, Sound. As you can see, these components are pretty low-level and are mostly not tied to my game at all, which is great.
+Here’s an example of a game specific component defined in Lua:</p>
+
+<figure class="highlight">
+  <pre><code class="language-lua" data-lang="lua"><span class="c1">-- ItemComponent.lua</span>
+<span class="kd">local</span> <span class="n">Component</span> <span class="o">=</span> <span class="nb">require</span><span class="p">(</span><span class="s2">"Component"</span><span class="p">)</span>
+<span class="kd">local</span> <span class="n">ItemComponent</span> <span class="o">=</span> <span class="n">Component</span><span class="p">:</span><span class="n">subclass</span><span class="p">(</span><span class="s2">"ItemComponent"</span><span class="p">)</span>
+
+<span class="k">function</span> <span class="nf">ItemComponent</span><span class="p">:</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">Component</span><span class="p">:</span><span class="n">initialize</span><span class="p">()</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">ItemComponent</span><span class="p">:</span><span class="n">loadData</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">.</span><span class="n">value</span> <span class="k">then</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">value</span>
+    <span class="k">end</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">name</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">description</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">iconName</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">iconName</span>
+
+    <span class="n">self</span><span class="p">.</span><span class="n">onEquipFunc</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">onEquip</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">onUnequipFunc</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">onUnequip</span>
+    <span class="n">self</span><span class="p">.</span><span class="n">useFunc</span> <span class="o">=</span> <span class="n">data</span><span class="p">.</span><span class="n">use</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">ItemComponent</span><span class="p">:</span><span class="n">use</span><span class="p">(</span><span class="n">itemOwner</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">useFunc</span> <span class="k">then</span>
+        <span class="n">self</span><span class="p">:</span><span class="n">useFunc</span><span class="p">(</span><span class="n">itemOwner</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">ItemComponent</span><span class="p">:</span><span class="n">onEquip</span><span class="p">(</span><span class="n">itemOwner</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">onEquipFunc</span> <span class="k">then</span>
+        <span class="n">self</span><span class="p">:</span><span class="n">onEquipFunc</span><span class="p">(</span><span class="n">itemOwner</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">ItemComponent</span><span class="p">:</span><span class="n">onUnequip</span><span class="p">(</span><span class="n">itemOwner</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">self</span><span class="p">.</span><span class="n">onUnequipFunc</span> <span class="k">then</span>
+        <span class="n">self</span><span class="p">:</span><span class="n">onUnequipFunc</span><span class="p">(</span><span class="n">itemOwner</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">ItemComponent</span><span class="p">:</span><span class="n">getIconName</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">self</span><span class="p">.</span><span class="n">iconName</span>
+<span class="k">end</span>
+
+<span class="k">return</span> <span class="n">ItemComponent</span></code></pre>
+</figure>
+
+<p>I also moved all of GUI logic to Lua too. The most complex GUI is dialogue GUI. It does a lot of stuff: it displays text character by character, speaking entity’s portrait; highlights some words, handles player’s choice in dialogues. I didn’t think that moving it to Lua would be real as the logic was pretty complex… but I managed to do it! Here’s a reminder of how many things happen in dialogues:
+<img src="/assets/re_creation_dev_log_dec_march/dialogue_cat.gif" alt="Nine patch example" /></p>
+
+<p>Now <code class="highlighter-rouge">GuiState</code> in C++ just iterates over all GUIs in GUI stack and just calls update and draw functions, not caring about game-specific things. Oh yeah, I now have GUI stack, so I can implement complex GUI’s which stack on top of each other (e.g. pause screen GUI on top of game GUI)</p>
+
+<p>By moving some components and all GUI stuff to Lua I finished a pretty important thing: all the game logic is in Lua now! Absolutely everything! This makes me incredibly happy and lets me easily implement new things without caring how Lua and C++ will interact. And another great thing is that the code is now easier to read and it 2-3 times smaller!</p>
+
+<p>I also implemented game mode stack in Lua, which was previously handled in C++. This means that I can easily create new game modes without touching any C++ code.</p>
+
+<p>This makes my engine a lot more generic and separates it from the game, which is great. This means that I can easily reuse my engine in other projects later: I’ll just have to change scripts and resources and most of the C++ code will remain the same. I will probably explain my current engine structure a bit later, once I’m 100% confident that it works great.</p>
+
+<h2 id="gui">GUI</h2>
+
+<p>Let’s talk about GUI a bit more. First of all, now there’s a good parent-child relation between elements. I store child offset relative to parent, so I can easily group and move things together. For example, a portrait of talker is a child of a dialogue window and its relative position to the border of the window is (6,8). So if I render the dialogue window at (100, 200), I’ll render the dialogue portait at (106, 208) by combining local child’s transform and parent’s transform.</p>
+
+<p>I also implemented nine-patch windows. Previously I just stored a big sprites of windows, but now I can just store them like this:</p>
+
+<p><img src="/assets/re_creation_dev_log_dec_march/gui_nine_patch.png" alt="Nine patch example" />
+and with some texture repeating, flipping and mirroring, I can get the dialogue window!
+<img src="/assets/re_creation_dev_log_dec_march/dialogue_window.png" alt="Dialogue window" />
+This not only saves texture space, but also allows me to easily create windows of different sizes.</p>
+
+<h2 id="some-small-c-related-refactorings">Some small C++ related refactorings</h2>
+
+<ul>
+  <li>Added lots of <code class="highlighter-rouge">const</code> where possible. The game was const correct most of the time, but there are quite a few places where I made non-const local variables which don’t change or failed to make some member function const, which they later became with some effort. Turns out that most of the time the things stay constant and very few things change, that’s why having most of the stuff const is great: you can easily see things that <strong>do</strong> change.</li>
+  <li>Stopped passing pointers in most functions and now pass everything by reference unless the pointer is really needed. A lot of this was in very old code, when I didn’t realize how perfect references are.</li>
+  <li>Started using <code class="highlighter-rouge">std::reference_wrapper</code> instead of raw non-owning pointers for storing references to stuff in <code class="highlighter-rouge">std::vector</code>. This is a very useful indicator of “hey, this is just a reference!”</li>
+  <li>Stopped handling each axis separately in some places, making changes like this:</li>
+</ul>
+
+<figure class="highlight">
+  <pre><code class="language-c--" data-lang="c++"><span class="n">someX</span> <span class="o">=</span> <span class="n">otherX</span> <span class="o">+</span> <span class="mi">5</span><span class="p">;</span>
+<span class="n">someY</span> <span class="o">=</span> <span class="n">otherY</span> <span class="o">+</span> <span class="mi">10</span><span class="p">;</span></code></pre>
+</figure>
+
+<p>and now I do this instead:</p>
+
+<figure class="highlight">
+  <pre><code class="language-c--" data-lang="c++"><span class="n">someVector</span> <span class="o">+=</span> <span class="n">otherVector</span> <span class="o">+</span> <span class="n">sf</span><span class="o">::</span><span class="n">Vector2f</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span></code></pre>
+</figure>
+
+<p>I used a lot of vectors before, but there were still places where I did computations for each vector’s coordinate or stored coordinates in two variables. It was pretty dumb, because most of the time you do the same thing for both X and Y, and duplicating the same code is not smart.</p>
+
+<ul>
+  <li>Introduced lots of type aliases, for example <code class="highlighter-rouge">TileIndex</code> instead of <code class="highlighter-rouge">sf::Vector2i</code>, <code class="highlighter-rouge">ComponentList</code> instead of <code class="highlighter-rouge">std::vector&lt;std::reference_wrapper&lt;Component&gt;&gt;</code> and so on (wish there were strong typedefs in C++!). This made code much more readable, because it leaves you with less information and most of the time I just don’t care about the underlying type, I care about it’s meaning.</li>
+</ul>
+
+<h2 id="levels-and-tile-maps">Levels and tile maps</h2>
+
+<p>A huge effort was put into remaking tile map system. Previously each tile map was a grid of chunks (each 8x8 tiles in size). This allowed me to save some space by not having to store a lot of empty tiles. But the data structure was pretty complicated. I used <code class="highlighter-rouge">std::vector&lt;std::vector&lt;TilemapChunk&gt;&gt;</code> and so if some chunks were stored in negative coordinates, I had to store index of top-left chunk and make sure to keep it in mind when accessing other chunks, because I couldn’t store negative indices in <code class="highlighter-rouge">std::vector&lt;std::vector&lt;TilemapChunk&gt;&gt;</code>. So, if <code class="highlighter-rouge">minChunkIndex</code> was (-10, -20), I found real index of (-3, -4) chunk in vector of vectors by removing <code class="highlighter-rouge">minChunkIndex</code>: (-3, -4) - (-10, -20) = (7, 16)</p>
+
+<p>It wasn’t very good system for various reasons, so I implemented a simpler structure: <code class="highlighter-rouge">std::unordered_map&lt;ChunkIndex, LevelChunk&gt;</code> (<code class="highlighter-rouge">ChunkIndex</code> is <code class="highlighter-rouge">sf::Vector2i</code>). Now I don’t have to store <code class="highlighter-rouge">minChunkIndex</code> and formulas are simplified. I also don’t waste space on empty chunks, which is another advantage of new system. It’s similar to implementing sparse matrices: instead of having large 2D array, I only store elements which are not zero (not empty in case of tile chunks).</p>
+
+<p>I also improved a lot of level editor code by completely removing all duplication, encapsulation breaks, etc. I previously thought like this:”It’s just a development tool, it doesn’t have to have very good code!”, but turns out that code here matters very much too! First of all, duplication is always bad. Secondly, encapsulation breaks make changes to other classes much harder.</p>
+
+<p>Thankfully, there weren’t much such breaks and I actually made a post previously about how having <code class="highlighter-rouge">TileMap::setTile</code> function saved me a lot of time, as I could easily change data structures of level without having to modify level editor code. But there were still some places in which I had to access some private parts of <code class="highlighter-rouge">TileMap</code>. So I made a lot of getters and setters. And it made <code class="highlighter-rouge">TileMap</code> class not properly encapsulated and much longer than it needed to be. So I found a great alternative.</p>
+
+<p><a href="https://en.wikibooks.org/wiki/More_C%2B%2B_Idioms/Friendship_and_the_Attorney-Client">Attorney-Client pattern</a> is a great way of solving this problem. Basically, I let some encapsulation breaks by creating LevelModifier structure and making it a friend of TileMap and other level related classes. Now if I need to create an encapsulation breaking function, I create something like this:</p>
+
+<figure class="highlight">
+  <pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="n">LevelModifier</span><span class="o">::</span><span class="n">setTile</span><span class="p">(</span><span class="n">Tilemap</span><span class="o">&amp;</span> <span class="n">tilemap</span><span class="p">,</span> <span class="cm">/* other args */</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="p">...</span> <span class="c1">// can access private data members and member functions of TileMap</span>
+<span class="p">}</span></code></pre>
+</figure>
+
+<p>This function is static, so I can later call it in LevelEditor like this:</p>
+
+<figure class="highlight">
+  <pre><code class="language-c--" data-lang="c++"><span class="k">if</span> <span class="p">(</span><span class="cm">/* left mouse button clicked */</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">LevelModifier</span><span class="o">::</span><span class="n">setTile</span><span class="p">(</span><span class="n">tileMap</span><span class="p">,</span> <span class="n">selectedTile</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+</figure>
+
+<p>Awesome. In fact, the number of such encapsulation functions is just 10. Pretty low and easily controllable. If I find myself in a situation where I had to change TileMap class considerably, I’ll be confident that I’ll have to deal with breaking changes in just a few functions.</p>
+
+<p>After this experience, I wondered how many functions of other classes I can make private. Previously I made them public by default for some reason, even if they were only called in member functions of this class. I managed to make quite a lot functions private without making significant changes to any code and improved encapsulation by doing so. There’s a small advantage to it: I can be sure that changing private function of the class won’t need many changes in other places.</p>
+
+<p>Back to levels. Previously all entity positions were stored in a level file and during level loading I just created each entity and placed them in the right spots of the map. This made some things pretty hard to load/save. I had to store position where entity spawned, I had to know if some entity will be saved to level file or not, etc.</p>
+
+<p>But then I realized one simple thing: what I considered “entity info” in level files was actually “spawn points info”. So if I just stored info about spawn points in tile map, I could then easily spawn entities with them later and also change them in level editor, instead of working with concrete entity instances. So, when I move entity in level editor, I don’t just move instance of this entity, but also its corresponding spawn point.</p>
+
+<p>It’s just separation of concerns. Entity doesn’t have to know about it’s spawn point most of the time. And when I save level, I don’t care about particular entities, I just care about spawn points. I can iterate through them and just save their properties. Restoring initial level state is also easier: I can just remove all entities and spawn new ones using spawn points.</p>
+
+<p>Trying to restore each entity’s initial state is more error prone. I guess this method of doing things explains bugs with saves in some games. In Fallout: New Vegas some NPCs may become hostile and attack you because of your actions, and after you reload your save, they may still attack you, even though in the loaded save state they were neutral to you! Probably this is explained by a bug when restoring entity’s state, if you reload the game, the game works as usual.</p>
+
+<p>I also started storing tile maps in JSON. Previously I stored them in a custom plain text format, but as the format got progressively harder to maintain (lots of parsing/saving code), I remade the whole thing in JSON. The code is much simpler to read and expand, so it’s great!</p>
+
+<p>Another thing I made is ability to hold mouse button down and paint tiles. Yes, this seems like a very easy thing to implement, but it wasn’t! I had to make sure that I could properly undo this action, create new level chunks on the fly, etc. And now I can easily create maps in any direction with this feature:
+<img src="/assets/re_creation_dev_log_dec_march/infinite_maps.gif" alt="Infinite maps" /></p>
+
+<h2 id="child-parent-hierarchy-and-relative-transforms">Child-parent hierarchy and relative transforms</h2>
+
+<p>Okay, if I made a more complex game, I would have made this a lot earlier, but here we go. Look at the gif:
+<img src="/assets/re_creation_dev_log_dec_march/child_parent.gif" alt="Child-parent example" /></p>
+
+<p>Hat entity is a child of Renatus entity. Renatus is a child of moving platform entity. This simple hierarchy is easy to handle: the only thing that moves is a platform. It stores coordinate of Renatus relative to it and uses it for relative movement. As Renatus gets moved, the hat moves by the same offset as well. The system is very easy, I just traverse through hierarchy and apply the same movement delta to each entity.</p>
+
+<p>One small thing had given me lots of headache: sometimes the relative movement was a bit shaky. It was because of float rounding, the picture explains the problem:
+<img src="/assets/re_creation_dev_log_dec_march/floor_problem.png" alt="Floor problem" />
+In the example both entities move by 0.2 pixels, but due to rounding on the screen, you can see a gap between the two appearing. This was unacceptable!</p>
+
+<p>Check out the <a href="https://en.sfml-dev.org/forums/index.php?topic=21626">thread I made about this</a>, if you’re interested in my solution. There were some interesting points made in the thread as well.</p>
+
+<h2 id="other-small-things">Other small things</h2>
+
+<p>And here are some other small things which I don’t want to write about, but if you’re interested in some, feel free to ask about them!</p>
+
+<ul>
+  <li>Previously all side animations had copies in a sprite sheet (e.g. left and right walking animations). Now I just flip them on GPU by setting texture rect’s width to be negative, when I want to flip animation. I’ll be doing the same with mirrored/rotated tiles a bit later.</li>
+  <li>Stupid collision optimization: I stopped checking collisions between static entities. There’s no need to check if static, unmovable tree collides with house or not. Both entities can’t move The number of collision checks reduced greatly in the result and collision is very fast now.</li>
+  <li>Started using entity handles (see <a href="https://eliasdaler.github.io/game-object-references/">my article</a> about them)</li>
+  <li>Camera is an entity now. Of course, it has properties of an entity: transform, movement component, AI component (used for following the path). So I don’t have to rewrite the same code twice and can script all camera logic in Lua.</li>
+  <li>Started using seconds instead of milliseconds everywhere. <code class="highlighter-rouge">sf::Time::asSeconds</code> returns a <code class="highlighter-rouge">float</code>, while <code class="highlighter-rouge">sf::Time::asMilliseconds</code> returns a rounded <code class="highlighter-rouge">int</code> (usually 16, corresponding to 60 FPS), the results are terrible for pixel perfect games, especially during camera scrolling. It results in camera having non-smooth movement, which has been a problem I was trying to fix for ages and finally did with such a simple change. Here’s <a href="https://plus.google.com/+flibitijibibo/posts/PysMth9Y5kN">a post about the similar problem which FEZ apparently also had</a> which inspired me to do this.</li>
+  <li>Made some multi-threading during loading. Basically, I can do most of the loading in another thread: sounds, scripts, level data, etc. But not textures, because OpenGL is not multi-threaded. The solution is simple: I load textures in RAM first and then move them to GPU in a main thread. It blocks the main thread, but it’s pretty fast and not really noticeable.</li>
+  <li>Worked on diagonal collision. I previously worked on it, but it was very buggy, as the player could get stuck between tiles (I noticed that some SNES and GBA games have this problem, e.g. Earthbound, Mother 3). But I fixed it! I hope that I’ll never have to deal with tile collision in the near future. It’s so hard!
+<img src="/assets/re_creation_dev_log_dec_march/tile_collision.gif" alt="Tile collision" /></li>
+</ul>
+
+<p>There are probably a lot of things I missed, but I hope that it’s enough to show you how much stuff I’ve done.</p>
+
+<h2 id="conclusion-and-plans">Conclusion and plans</h2>
+
+<p>This semester is very intense. Lots of homework, project assignments and so on. This was the reason I stopped working on a game for a 1.5 months and probably won’t be working on it for another two and a half. In the meantime, I will be doing small things about the game which don’t require coding: improve plot, think about game mechanics and puzzles, limit my scope, etc. I also plan to read stuff about game development and think how I can further improve my code and engine structure. It’s not the main priority now, however. I’m mostly happy with most of my code and don’t think that a huge changes will come.</p>
+
+<p>What I want to have in the future is a stable foundation. You know, just some level with a lot of things going on: AI, NPCs, complex tile map, basic combat, particles and so on. A vertical slice of the game, working just fine. The confidence in the code base: that it works well and doesn’t require me write a lot of boilerplate code and that I’m not limited by it. Good resource system, neat organization in files, smooth content creation and so on.</p>
+
+<p>These are some things which take a lot of time, but once they’re achieved, they can provide a lot of confidence and comfort in the future and save me from having to change a lot of things at once.</p>
+
+<p>Don’t worry about the project: I’ve taken a few breaks from it before and coming back was as exciting as ever. As the time goes on, I don’t lose any motivation or confidence in it, in fact I love it more and more. And some of you may be disappointed in my slow progress, and I’m sorry for it, but not rushing is what makes it such a nice experience for me. And hey, even if you don’t get the playable game in the end, you can still learn something from my dev logs and tutorials. If I didn’t spend lots of time reiterating, researching, refactoring, I would have never figured out a lot of things which helped a lot of people.
+One more thing: art, dialogue, plot, atmosphere and whole concept just got a lot better as the time went by. If I finished the game with the art, plot and gameplay it had two years ago, it would not be very good. But as my skills improve, I apply them to the game and make it considerably better than before.</p>
+
+<p>Thanks for reading!</p>
+
+    <hr />
+    <p>Follow me on twitter <a href="https://twitter.com/EliasDaler">@EliasDaler</a> to not miss the new stuff!</p>
+  </div>
+
+</article>
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//eliasdaler-github-io.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Making and storing references to game objects (entities) in C++ and Lua &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Making and storing references to game objects (entities) in C++ and Lua</h1>
+    <span class="post-meta"><time datetime="2017-01-22T14:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>Jan 22, 2017</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#Lua" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Lua</a></li>
+  
+    <li><a href="/tags#Gamedev" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Gamedev</a></li>
+  
+    <li><a href="/tags#Tutorial" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> Tutorial</a></li>
+  
+</ul>
+  </header>
+  <hr>
+
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="table-of-contents">Table of Contents</h1>
+<ul>
+    <li><a href="#introduction">Introduction</a></li>
+    <li><a href="#shared_ptr-and-weak_ptr">shared_ptr and weak_ptr</a></li>
+    <li><a href="#using-unique-ids">Using unique ids</a></li>
+    <li><a href="#storing-references-to-entities-in-lua">Storing references to entities in Lua</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<h1 id="introduction">Introduction</h1>
+
+<p><img src="/assets/ids.png" alt="Ids" style="display:block; margin: 0 auto;" /></p>
+
+<p>The problem of handling references to game objects (I’ll call them <em>entities</em>) comes up very often. Sometimes it’s child-parent relationship between the entities, sometimes it’s useful to store a reference to an object in event data, some task scheduling class and so on.</p>
+
+<p>Sometimes a simple pointer, reference or <code class="highlighter-rouge">std::reference_wrapper</code> is enough. But the problem with raw pointers and references is that once you use them, you have to make sure that the entity which is being referenced stays alive and is not moved in memory without notifying objects which hold references. And with good design you’ll probably be able to achieve that.</p>
+
+<p>But stale pointers/references give some of the worst bugs, which are difficult to track, crash your game and may not be easily identifiable. Some entities may start to occupy different addresses in memory (for example, after you reload a level and decide to create all entities from scratch). While it’s possible to manually update all pointers to previously referenced entities, it’s certainly will be better to do so automatically and without a chance of forgetting some pointers which will be stale.</p>
+
+<p>Let’s see all these problems can be solved. The latest solution (about storing references to Lua) was discovered by me not long ago and it is the point of me writing the article, but I want to show some other ways of solving the problem. Let’s start!</p>
+
+<!--more-->
+<p><a class="anchor" id="read-more"></a></p>
+
+<h1 id="shared_ptr-and-weak_ptr">shared_ptr and weak_ptr</h1>
+
+<p>Some of the problems with raw references can be solved with <code class="highlighter-rouge">std::shared_ptr</code> and <code class="highlighter-rouge">std::weak_ptr</code>. First, you create your entities as with <code class="highlighter-rouge">std::make_shared</code>. After that you’ll create all references to it with <code class="highlighter-rouge">std::weak_ptr</code>s which won’t affect your entity’s lifetime. After that you can use <code class="highlighter-rouge">std::weak_ptr&lt;T&gt;::expired</code> function to check if the reference is still valid.</p>
+
+<p>The solution is not perfect. First of all, it requires you to create all your entities as <code class="highlighter-rouge">shared_ptr</code>s which may have some significant overhead compared to <code class="highlighter-rouge">unique_ptr</code>s. And after all, it’s better for the lifetime of entities not to be shared and that semantic is better expressed with <code class="highlighter-rouge">unique_ptr</code>. Shared pointers also don’t solve the problem of moving entities in memory: you can’t swap what’s inside the <code class="highlighter-rouge">shared_ptr</code> and have all <code class="highlighter-rouge">weak_ptr</code>s automatically update their pointers.</p>
+
+<h1 id="using-unique-ids">Using unique ids</h1>
+
+<p>One solution to the problem is just creating unique ids for entities and storing those ids instead of raw pointers or references. There a lots of ways to generate and represent entity ids. Ids can just be integers with <code class="highlighter-rouge">EntityManager</code> having a counter which will be incremented as new entities are created: the first entity will get id=0, the second one id=1 and so on. Another way to generate ids is to use some hashing algorithm or <a href="https://en.wikipedia.org/wiki/Universally_unique_identifier">UUID</a>s. No matter what, your ids should stay unique, unless you add some additional info (like entity creation time or some tags) to your id.</p>
+
+<p>Here’s how your <code class="highlighter-rouge">EntityManager</code> class may look:</p>
+<pre class="vs-code"><span class="keyword">class</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityManager</span>&nbsp;<span class="operator">{</span>
+<span class="keyword">public</span><span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">*</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">getEntity</span><span class="operator">(</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">)</span>&nbsp;<span class="keyword">const</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">bool</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">entityExists</span><span class="operator">(</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">)</span>&nbsp;<span class="keyword">const</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;...</span>
+<span class="keyword">private</span><span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">unordered_map</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span><span class="operator">,</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">unique_ptr</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">&gt;&gt;</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entities</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">//&nbsp;...</span>
+<span class="operator">};</span></pre>
+
+<p>Using ids also helps with recreation problem: you can easily reload/recreate the entity and just assign the same id to it as before. It will have a different adress in memory, but the next time someone calls <code class="highlighter-rouge">getEntity</code> the updated entity is returned. You can also easily send these ids over the network or save them in your save files.</p>
+
+<p>Your code when using entity id becomes something like this:</p>
+
+<pre class="vs-code"><span class="keyword">auto</span>&nbsp;<span class="cppLocalVariable">entityPtr</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppGlobalVariable">g_EntityManager</span><span class="operator">.</span><span class="cppMemberFunction">getEntity</span><span class="operator">(</span><span class="cppLocalVariable">entityId</span><span class="operator">);</span>
+<span class="cppLocalVariable">entityPtr</span><span class="operator">-&gt;</span><span class="cppMemberFunction">doSomething</span><span class="operator">();</span></pre>
+
+<p>Of course this creates some overhead because you now have a layer of indirection: you have to search <code class="highlighter-rouge">unordered_map</code> inside the <code class="highlighter-rouge">EntityManager</code> to get the raw reference to the entity, but if you don’t do it too often (and you most likely won’t), you’ll be fine!</p>
+
+<p>There’s another improvement which can be done: you can wrap your id inside the struct and then overload <code class="highlighter-rouge">operator-&gt;</code> for handle to act like a raw pointer:</p>
+
+<pre class="vs-code"><span class="keyword">struct</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityHandle</span>&nbsp;<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityManager</span><span class="operator">*</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entityManager</span><span class="operator">;</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">EntityHandle</span><span class="operator">(</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">,</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityManager</span><span class="operator">*</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">entityManager</span><span class="operator">)</span>&nbsp;<span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">(</span><span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">),</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entityManager</span><span class="operator">(</span><span class="cppParameter - identifier - (TRANSIENT)">entityManager</span><span class="operator">)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">{}</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">*</span>&nbsp;<span class="cppMemberOperator - keyword - (TRANSIENT)">operator</span><span class="cppMemberOperator - operator - (TRANSIENT)">-&gt;</span><span class="operator">()</span>&nbsp;<span class="keyword">const</span>&nbsp;<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">get</span><span class="operator">();</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">}</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">*</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">get</span><span class="operator">()</span>&nbsp;<span class="keyword">const</span>&nbsp;<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppMacro - identifier - (TRANSIENT)">assert</span><span class="operator">(</span><span class="cppMemberField - identifier - (TRANSIENT)">entityManager</span><span class="operator">-&gt;</span><span class="identifier">entityExists</span><span class="operator">(</span><span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">));</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entityManager</span><span class="operator">-&gt;</span><span class="cppMemberFunction - identifier - (TRANSIENT)">getEntity</span><span class="operator">(</span><span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">}</span>
+<span class="operator">};</span></pre>
+
+<p>Now you can do things like this:</p>
+
+<pre class="vs-code"><span class="cppType">EntityHandle</span>&nbsp;<span class="cppLocalVariable">handle</span><span class="operator">(</span><span class="cppLocalVariable">someEntityId</span><span class="operator">,</span>&nbsp;<span class="operator">&amp;</span><span class="cppGlobalVariable">g_EntityManager</span><span class="operator">);</span>
+<span class="cppLocalVariable">handle</span><span class="cppMemberOperator">-&gt;</span><span class="cppMemberFunction">doSomething</span><span class="operator">();</span>
+
+<span class="comment">//&nbsp;or...</span>
+
+<span class="keyword">auto</span>&nbsp;<span class="cppLocalVariable">entityPtr</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppLocalVariable">handle</span><span class="operator">.</span><span class="cppMemberFunction">get</span><span class="operator">();</span>
+<span class="cppLocalVariable">entityPtr</span><span class="operator">-&gt;</span><span class="cppMemberFunction">doSomething</span><span class="operator">();</span></pre>
+
+<p>Notice that we also get some error checking with assert which checks validity of the reference.
+Great! Now let’s see how we can reference entities in Lua scripts.</p>
+
+<h1 id="storing-references-to-entities-in-lua">Storing references to entities in Lua</h1>
+
+<p class="message">Full implementation can be found here: <i class="fa fa-github" aria-hidden="true"></i><a href="https://gist.github.com/eliasdaler/f5c2ee50fc7e42bf3ee18ad7d46d18f8">C++ part</a>, <i class="fa fa-github" aria-hidden="true"></i><a href="https://gist.github.com/eliasdaler/f3516d3deabc32b465a7c244ff082cf0">Lua part</a>.</p>
+
+<p>First of all, it’s obvious that you can use the same approach in Lua. Your handle can just be a number or a table with <code class="highlighter-rouge">__index</code> meta-method so that you can use your handle as if it was the raw reference. But there’s a neater method I recently came up with. Let’s see how it works.</p>
+
+<p>First of all, our handles will be tables with raw C++ references stored in them as userdata. They’ll also have a bool named <code class="highlighter-rouge">isValid</code> which will help us test if the handle is still valid. We’ll also have a global table of references in Lua, so that you can easily get handle from any place without calling C++. What’s neat is that you’ll get <strong>references</strong> to your handles, not a copy. It’s great, because you can easily compare two handles or even use them as table keys. You also don’t waste your memory, but that’s not a big concern as our handles are very light.</p>
+
+<p>If you want to remove and recreate some entity, you’ll just have to notify the main Lua handle which will be stored inside some global Lua table. And because all your handles in Lua will be references to original handle you won’t have to care about them: once you update the main handle, it’s updated everywhere.</p>
+
+<p>Another good thing is that once the entity is removed, we can just set <code class="highlighter-rouge">isValid</code> to <code class="highlighter-rouge">false</code> and raw reference to <code class="highlighter-rouge">nil</code> just to be extra safe.</p>
+
+<p>Let’s get to implementation! We’ll use <i class="fa fa-github" aria-hidden="true"></i><a href="https://github.com/ThePhD/sol2">sol2</a> as our Lua/C++ binding library. Let’s write a simple <code class="highlighter-rouge">Entity</code> and <code class="highlighter-rouge">EntityManager</code> classes for testing:</p>
+
+<pre class="vs-code"><span class="keyword">using</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="keyword">int</span><span class="operator">;</span>
+
+<span class="keyword">class</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">Entity</span>&nbsp;<span class="operator">{</span>
+<span class="keyword">public</span><span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">explicit</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">Entity</span><span class="operator">(</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">)</span>&nbsp;<span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">name</span><span class="operator">(</span><span class="string">&quot;John&quot;</span><span class="operator">),</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">(</span><span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">{}</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">const</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">string</span><span class="operator">&amp;</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">getName</span><span class="operator">()</span>&nbsp;<span class="keyword">const</span>&nbsp;<span class="operator">{</span>&nbsp;<span class="keyword">return</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">name</span><span class="operator">;</span>&nbsp;<span class="operator">}</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">setName</span><span class="operator">(</span><span class="keyword">const</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">string</span><span class="operator">&amp;</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">n</span><span class="operator">)</span>&nbsp;<span class="operator">{</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">name</span>&nbsp;<span class="cppMemberOperator - operator - (TRANSIENT)">=</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">n</span><span class="operator">;</span>&nbsp;<span class="operator">}</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">getId</span><span class="operator">()</span>&nbsp;<span class="keyword">const</span>&nbsp;<span class="operator">{</span>&nbsp;<span class="keyword">return</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">;</span>&nbsp;<span class="operator">}</span>
+<span class="keyword">private</span><span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">string</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">name</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">id</span><span class="operator">;</span>
+<span class="operator">};</span>
+
+<span class="cppNamespace - identifier - (TRANSIENT)">sol</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">state</span>&nbsp;<span class="cppGlobalVariable - identifier - (TRANSIENT)">lua</span><span class="operator">;</span>&nbsp;<span class="comment">//&nbsp;globals&nbsp;are&nbsp;bad,&nbsp;but&nbsp;we&#39;ll&nbsp;use&nbsp;it&nbsp;for&nbsp;simpler&nbsp;implementation</span>
+
+<span class="keyword">class</span>&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityManager</span>&nbsp;<span class="operator">{</span>
+<span class="keyword">public</span><span class="operator">:</span>&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">EntityManager</span><span class="operator">()</span>&nbsp;<span class="operator">:</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">idCounter</span><span class="operator">(</span><span class="number">0</span><span class="operator">)</span>&nbsp;<span class="operator">{}</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">&amp;</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">createEntity</span><span class="operator">()</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">auto</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">id</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">idCounter</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">++</span><span class="cppMemberField - identifier - (TRANSIENT)">idCounter</span><span class="operator">;</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">auto</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">inserted</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entities</span><span class="operator">.</span><span class="cppMemberFunction - identifier - (TRANSIENT)">emplace</span><span class="operator">(</span><span class="cppLocalVariable - identifier - (TRANSIENT)">id</span><span class="operator">,</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppFunction - identifier - (TRANSIENT)">make_unique</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">&gt;(</span><span class="cppLocalVariable - identifier - (TRANSIENT)">id</span><span class="operator">));</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">auto</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">it</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">inserted</span><span class="operator">.</span><span class="cppMemberField - identifier - (TRANSIENT)">first</span><span class="operator">;</span>&nbsp;<span class="comment">//&nbsp;iterator&nbsp;to&nbsp;created&nbsp;id/Entity&nbsp;pair</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">auto</span><span class="operator">&amp;</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">e</span>&nbsp;<span class="operator">=</span>&nbsp;<span class="cppMemberOperator - operator - (TRANSIENT)">*</span><span class="cppLocalVariable - identifier - (TRANSIENT)">it</span><span class="cppMemberOperator - operator - (TRANSIENT)">-&gt;</span><span class="cppMemberField - identifier - (TRANSIENT)">second</span><span class="operator">;</span>&nbsp;<span class="comment">//&nbsp;created&nbsp;entity</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppGlobalVariable - identifier - (TRANSIENT)">lua</span><span class="cppMemberOperator - operator - (TRANSIENT)">[</span><span class="string">&quot;createHandle&quot;</span><span class="cppMemberOperator - operator - (TRANSIENT)">](</span><span class="cppLocalVariable - identifier - (TRANSIENT)">e</span><span class="cppMemberOperator - operator - (TRANSIENT)">)</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span>&nbsp;<span class="cppLocalVariable - identifier - (TRANSIENT)">e</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">}</span>
+
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">void</span>&nbsp;<span class="cppMemberFunction - identifier - (TRANSIENT)">removeEntity</span><span class="operator">(</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">{</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppGlobalVariable - identifier - (TRANSIENT)">lua</span><span class="cppMemberOperator - operator - (TRANSIENT)">[</span><span class="string">&quot;onEntityRemoved&quot;</span><span class="cppMemberOperator - operator - (TRANSIENT)">](</span><span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="cppMemberOperator - operator - (TRANSIENT)">)</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entities</span><span class="operator">.</span><span class="cppMemberFunction - identifier - (TRANSIENT)">erase</span><span class="operator">(</span><span class="cppParameter - identifier - (TRANSIENT)">id</span><span class="operator">);</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">}</span>
+<span class="keyword">private</span><span class="operator">:</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">unordered_map</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">EntityId</span><span class="operator">,</span>&nbsp;<span class="cppNamespace - identifier - (TRANSIENT)">std</span><span class="operator">::</span><span class="cppType - identifier - (TRANSIENT)">unique_ptr</span><span class="operator">&lt;</span><span class="cppType - identifier - (TRANSIENT)">Entity</span><span class="operator">&gt;&gt;</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">entities</span><span class="operator">;</span>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cppType - identifier - (TRANSIENT)">EntityId</span>&nbsp;<span class="cppMemberField - identifier - (TRANSIENT)">idCounter</span><span class="operator">;</span>
+<span class="operator">};</span></pre>
+
+<p>Here’s how we will create our handle in Lua:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">createHandle</span><span class="p">(</span><span class="n">cppRef</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">handle</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">cppRef</span> <span class="o">=</span> <span class="n">cppRef</span><span class="p">,</span>
+        <span class="n">isValid</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="p">}</span>
+    <span class="nb">setmetatable</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">mt</span><span class="p">)</span>
+    <span class="n">Handles</span><span class="p">[</span><span class="n">cppRef</span><span class="p">:</span><span class="n">getId</span><span class="p">()]</span> <span class="o">=</span> <span class="n">handle</span>
+    <span class="k">return</span> <span class="n">handle</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">Handles</code> global table stores all handles so that we can easily get them later. As you can see, we still use integer ids for it as a tables key so that when we remove an entity, we can easily find its handle and modify it appropriately.</p>
+
+<p>The metatable has an important function: it will let us use the handle as if it was the original reference. Here’s how it’s written:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">mt</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+<span class="n">mt</span><span class="p">.</span><span class="n">__index</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">handle</span><span class="p">.</span><span class="n">isValid</span> <span class="k">then</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">debug.traceback</span><span class="p">())</span>
+        <span class="nb">error</span><span class="p">(</span><span class="s2">"Error: handle is not valid!"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="k">return</span> <span class="k">function</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="k">return</span> <span class="n">Entity</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">handle</span><span class="p">.</span><span class="n">cppRef</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Just a quick reminder: metatable’s <code class="highlighter-rouge">__index</code> function gets called when the key in the table is not found and the table (our handle) and missing key are passed.</p>
+
+<p>Here’s an example of how it all works. When we do this:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">handle</span><span class="p">:</span><span class="n">setName</span><span class="p">(</span><span class="s2">"John"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Lua checks if handle table has “setName” key, but it doesn’t, so it calls metatable’s <code class="highlighter-rouge">__index</code> function with handle and “John” as parameters. The wrapper around <code class="highlighter-rouge">Entity</code>’s member function is returned and it gets called. The function which gets returned is a closure which calls the <code class="highlighter-rouge">Entity</code>’s class member function on original raw reference. Why can’t we just return <code class="highlighter-rouge">Entity[key]</code>? The problem with that is that our handle will get passed into it while the function expects raw reference to be passed (<code class="highlighter-rouge">cppRef:setName("John")</code> is the same as calling <code class="highlighter-rouge">Entity.setName(cppRef, "John")</code>).</p>
+
+<p>The error checking that we have here is extremely important and useful! It allows us to easily debug problems with our code: we even print the call stack to find the place where our code crashed!</p>
+<p class="message">
+Notice that we pass "2" as the second argument in `error` function. It tells it that the problem is not the function which called it, the bad one was below it in a call stack.
+</p>
+
+<p>Another great thing about this implementation is that it lets us handle error on Lua side, not C++ side. Once the C++ function is called from Lua, it’s hard to properly throw and catch an error from C++. You’ll have to compile Lua as C++ to do it without a crash. Throwing the error before calling C++ allows us to safely catch it on Lua side and handle it appropriately. We’ll see how it can be done a bit later.</p>
+
+<p>Let’s test out reference first:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">test</span><span class="p">(</span><span class="n">cppRef</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">createHandle</span><span class="p">(</span><span class="n">cppRef</span><span class="p">)</span>
+    <span class="n">testHandle</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">testHandle</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"Hello, my name is "</span> <span class="o">..</span> <span class="n">handle</span><span class="p">:</span><span class="n">getName</span><span class="p">())</span>
+    <span class="n">handle</span><span class="p">:</span><span class="n">setName</span><span class="p">(</span><span class="s2">"Mark"</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">"My name is "</span> <span class="o">..</span> <span class="n">handle</span><span class="p">:</span><span class="n">getName</span><span class="p">()</span> <span class="o">..</span> <span class="s2">" now!"</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+
+<pre style="background-color:black;color:white">Hello, my name is John
+My name is Mark now!</pre>
+
+<p>It works! What should we do when entity gets removed? Let’s create a function for that:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">onEntityRemoved</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">Handles</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+    <span class="n">handle</span><span class="p">.</span><span class="n">cppRef</span> <span class="o">=</span> <span class="kc">nil</span>
+    <span class="n">handle</span><span class="p">.</span><span class="n">isValid</span> <span class="o">=</span> <span class="kc">false</span>
+    <span class="n">Handles</span><span class="p">[</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>We need to call it before our entity gets removed and you can place it into <code class="highlighter-rouge">Entity</code>’s destructor or into <code class="highlighter-rouge">EntityManager</code>’s <code class="highlighter-rouge">removeEntity</code> function. Note, that this doesn’t remove the handle itself: someone may still be referencing it, but setting corresponding value in <code class="highlighter-rouge">Handles</code> table to <code class="highlighter-rouge">nil</code> is still useful because if someone tries to grab a handle later, <code class="highlighter-rouge">nil</code> will be returned. What’s more important is that <code class="highlighter-rouge">isValid</code> is set to false so that the next time someone tries to use the handle, the error will be raised.</p>
+
+<p>Now let’s see what happens when we try to use invalid reference. We can even do our error handling in Lua now!</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">testBadReference</span><span class="p">()</span>
+    <span class="kd">local</span> <span class="n">handle</span> <span class="o">=</span> <span class="n">Handles</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">-- this handle exists and is okay</span>
+    <span class="n">handle</span><span class="p">.</span><span class="n">isValid</span> <span class="o">=</span> <span class="kc">false</span> <span class="c1">-- but suppose that entity was removed!</span>
+    <span class="kd">local</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="nb">pcall</span><span class="p">(</span><span class="n">testHandle</span><span class="p">,</span> <span class="n">handle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">err</span> <span class="k">then</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When we call this function from C++ we don’t get a crash which would have been caused by using stale reference. Instead, we get a helpful error message and call stack:</p>
+<pre style="background-color:black;color:white">stack traceback:
+    script.lua:23: in function 'getName'
+    script.lua:57: in function &lt;script.lua:56&gt;
+    [C]: in function 'pcall'
+    script.lua:65: in function &lt;script.lua:62&gt;
+script.lua:57: Error: handle is not valid!</pre>
+
+<p>What about the performance? My tests show that it’s around <strong>600 nanoseconds</strong> per C++ member function call. It’s not that bad, but still may be not good enough for some people. In that case it’s easy to get a raw reference and then use it without any additional overhead of error checking:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">rawRef</span> <span class="o">=</span> <span class="n">handle</span><span class="p">.</span><span class="n">cppRef</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Raw reference used. Name: "</span> <span class="o">..</span> <span class="n">rawRef</span><span class="p">:</span><span class="n">getName</span><span class="p">())</span>
+</code></pre></div></div>
+
+<p>We can also speed up <code class="highlighter-rouge">__index</code> function. I’ve found that its biggest overhead is creating a closure every time… so let’s memoize our wrapper functions! First of all, we’ll create a table which will store our wrapper functions:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">local</span> <span class="n">memoizedFuncs</span> <span class="o">=</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<p>And then we change our <code class="highlighter-rouge">__index</code> method to this:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mt</span><span class="p">.</span><span class="n">__index</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">handle</span><span class="p">.</span><span class="n">isValid</span> <span class="k">then</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">debug.traceback</span><span class="p">())</span>
+        <span class="nb">error</span><span class="p">(</span><span class="s2">"Error: handle is not valid!"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="kd">local</span> <span class="n">f</span> <span class="o">=</span> <span class="n">memoizedFuncs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span> <span class="k">then</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="k">return</span> <span class="n">Entity</span><span class="p">[</span><span class="n">key</span><span class="p">](</span><span class="n">handle</span><span class="p">.</span><span class="n">cppRef</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="k">end</span>
+        <span class="n">memoizedFuncs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">f</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>The closure for each function will be created once and then will get reused. This speeds up things considerably! The overhead is roughly <strong>200 nanoseconds</strong> per call.</p>
+
+<p>What else? Calling the function through <code class="highlighter-rouge">__index</code> produces additional overhead too. Suppose that we use <code class="highlighter-rouge">getName</code> function very often and want it to be part of our handle table so that it’s called directly. Ok, let’s do this!</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">createHandle</span><span class="p">(</span><span class="n">cppRef</span><span class="p">)</span>
+    <span class="kd">local</span> <span class="n">handle</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">cppRef</span> <span class="o">=</span> <span class="n">cppRef</span><span class="p">,</span>
+        <span class="n">isValid</span> <span class="o">=</span> <span class="kc">true</span>
+    <span class="p">}</span>
+    <span class="n">handle</span><span class="p">.</span><span class="n">getName</span> <span class="o">=</span> <span class="k">function</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Entity</span><span class="p">.</span><span class="n">getName</span><span class="p">(</span><span class="n">handle</span><span class="p">.</span><span class="n">cppRef</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="nb">setmetatable</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">mt</span><span class="p">)</span>
+    <span class="n">Handles</span><span class="p">[</span><span class="n">cppRef</span><span class="p">:</span><span class="n">getId</span><span class="p">()]</span> <span class="o">=</span> <span class="n">handle</span>
+    <span class="k">return</span> <span class="n">handle</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Wait a second… what happens when we call getName on bad handle? There’s no error checking! Let’s fix that:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">function</span> <span class="nf">getWrappedSafeFunction</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">function</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">handle</span><span class="p">.</span><span class="n">isValid</span> <span class="k">then</span>
+                <span class="nb">print</span><span class="p">(</span><span class="nb">debug.traceback</span><span class="p">())</span>
+                <span class="nb">error</span><span class="p">(</span><span class="s2">"Error: handle is not valid!"</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">end</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">handle</span><span class="p">.</span><span class="n">cppRef</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+        <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>and then in createHandle we’ll write:</p>
+
+<div class="language-lua highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">handle</span><span class="p">.</span><span class="n">getName</span> <span class="o">=</span> <span class="n">getWrappedSafeFunction</span><span class="p">(</span><span class="n">Entity</span><span class="p">.</span><span class="n">getName</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Now the overhead is just <strong>70 nanoseconds</strong>. The only added overhead is additional function call, validity check and retrieval of raw reference from handle table, but I think it’s pretty small for gained benefits.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>In this article I’ve shown how to use different approaches to solving the “dangling pointer” problem and how to add additional safety layer to Lua scripts with very small overhead. Are there any awesome solutions that I’ve missed? Feel free to share them in comments.</p>
+
+<p>Hope you’ve enjoyed this article. Thanks for reading!</p>
+
+    <hr />
+    <p>Follow me on twitter <a href="https://twitter.com/EliasDaler">@EliasDaler</a> to not miss the new stuff!</p>
+  </div>
+
+</article>
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//eliasdaler-github-io.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>

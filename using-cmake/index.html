@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>
+    
+      Using CMake and managing dependencies &middot; Elias Daler's blog
+    
+  </title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="/public/css/poole.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+  <link rel="stylesheet" href="/public/css/lanyon.css">
+  <link rel="stylesheet" href="/public/css/videoWrapper.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Icons -->
+  <link rel="shortcut icon" href="/public/favicon.ico">
+
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="RSS" href="/atom.xml">
+</head>
+
+  <body>
+
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+
+  <div class="sidebar-item">
+    <h4 style="color:#FFFFFF;"><i class="fa fa-gamepad fa-3x" aria-hidden="true"></i><br>Elias Daler's blog
+</h4>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a class="sidebar-nav-item" href="/"><i class="fa fa-home fa-fw" aria-hidden="true"></i>&nbsp; Home</a>
+    <a class="sidebar-nav-item" href="/re-creation/"><i class="fa fa-gamepad fa-fw" aria-hidden="true"></i>&nbsp; Re:creation</a>
+    <a class="sidebar-nav-item" href="/programming-and-gamedev-resources/"><i class="fa fa-list-ul fa-fw" aria-hidden="true"></i>&nbsp; Programming and game dev resources</a>
+    <a class="sidebar-nav-item" href="/about/"><i class="fa fa-user fa-fw" aria-hidden="true"></i>&nbsp; About</a>
+    <a class="sidebar-nav-item" href="/tags/"><i class="fa fa-tags fa-fw" aria-hidden="true"></i>&nbsp; Tags</a>
+  </nav>
+
+  <div class="sidebar-item">
+    <h5 style="color:#FFFFFF;">
+      &copy; 2021. Elias Daler. All rights reserved.
+    </h5>
+  </div>
+</div>
+
+
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Elias Daler's blog</a>
+            <small></small>
+          </h3>
+        </div>
+      </div>
+
+      <div class="container content">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using CMake and managing dependencies</h1>
+    <span class="post-meta"><time datetime="2021-05-24T00:00:00+03:00" itemprop="datePublished"><i class="fa fa-calendar" aria-hidden="true"></i> Posted on <b>May 24, 2021</b></time></span>
+<ul class="tags">
+  
+    <li><a href="/tags#C%2B%2B" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> C++</a></li>
+  
+    <li><a href="/tags#CMake" class="tag"><i class="fa fa-tag" aria-hidden="true"></i> CMake</a></li>
+  
+</ul>
+  </header>
+  <hr>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Building C++ projects and managing dependencies is hard. CMake’s FetchContent makes it much more manageable and easy to do.</p>
+
+<p>We’ll go step by step and create a simple project which will have SFML, Dear ImGui and ImGui-SFML as its dependencies. The project will clone these dependencies’ source code from Github and build them. You won’t need to use prebuilt libraries ever again.</p>
+
+<p>I’ll try to explain everything as I go on down to a “basic” things. It’s good to understand everything you do and be able to do it from scratch without any guides. This article will also be a good starting point if you’ve never used CMake before.</p>
+
+<p>If you just want to learn how to manage dependencies with CMake with <code class="highlighter-rouge">FetchContent</code>, you can just jump straight to <a href="#adding-sfml-as-a-dependency">Adding SFML as a dependency</a> section.</p>
+
+<p>The source code of the project in the article can be found <a href="https://github.com/eliasdaler/cmake-fetchcontent-tutorial-code">here</a>.</p>
+
+<!--more-->
+<p><a class="anchor" id="read-more"></a></p>
+
+<h2 class="no_toc" id="table-of-contents">Table of contents</h2>
+
+<ul id="markdown-toc">
+  <li><a href="#hello-world" id="markdown-toc-hello-world">Hello, world</a></li>
+  <li><a href="#building-a-project" id="markdown-toc-building-a-project">Building a project</a></li>
+  <li><a href="#managing-dependencies" id="markdown-toc-managing-dependencies">Managing dependencies</a>    <ul>
+      <li><a href="#manual-management" id="markdown-toc-manual-management">Manual management</a></li>
+      <li><a href="#git-submodules" id="markdown-toc-git-submodules">Git submodules</a></li>
+      <li><a href="#package-managers" id="markdown-toc-package-managers">Package managers</a></li>
+      <li><a href="#fetchcontent" id="markdown-toc-fetchcontent">FetchContent</a></li>
+    </ul>
+  </li>
+  <li><a href="#adding-sfml-as-a-dependency" id="markdown-toc-adding-sfml-as-a-dependency">Adding SFML as a dependency</a></li>
+  <li><a href="#adding-dear-imgui-and-imgui-sfml-as-dependencies" id="markdown-toc-adding-dear-imgui-and-imgui-sfml-as-dependencies">Adding Dear ImGui and ImGui-SFML as dependencies</a></li>
+  <li><a href="#speeding-up-your-builds" id="markdown-toc-speeding-up-your-builds">Speeding up your builds</a></li>
+  <li><a href="#using-fetchcontent-with-local-source-directories" id="markdown-toc-using-fetchcontent-with-local-source-directories">Using FetchContent with local source directories</a></li>
+  <li><a href="#some-notes-about-libraries-which-dont-behave-well" id="markdown-toc-some-notes-about-libraries-which-dont-behave-well">Some notes about libraries which don’t behave well</a>    <ul>
+      <li><a href="#missing-or-poorly-written-cmake-build" id="markdown-toc-missing-or-poorly-written-cmake-build">Missing or poorly written CMake build</a></li>
+      <li><a href="#build_shared_libs" id="markdown-toc-build_shared_libs">BUILD_SHARED_LIBS</a></li>
+      <li><a href="#copying-dlls-on-windows" id="markdown-toc-copying-dlls-on-windows">Copying DLLs on Windows</a></li>
+      <li><a href="#find_package" id="markdown-toc-find_package">find_package</a></li>
+    </ul>
+  </li>
+  <li><a href="#closing-thoughts" id="markdown-toc-closing-thoughts">Closing thoughts</a></li>
+</ul>
+
+<h2 id="hello-world">Hello, world</h2>
+
+<p>First, let’s create a bunch of files and directories so that we have a structure like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+├── CMakeLists.txt
+└── src
+    ├── CMakeLists.txt
+    └── main.cpp
+</code></pre></div></div>
+
+<p>Let’s start with a CMakeLists.txt from a root directory.</p>
+
+<p>It’s simple:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cmake_minimum_required</span><span class="p">(</span>VERSION 3.15<span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span>example
+  LANGUAGES CXX
+  VERSION 1.0
+<span class="p">)</span>
+
+<span class="nb">add_subdirectory</span><span class="p">(</span>src<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The first line sets up a required minimal version of CMake which can be used to build the project. CMake constantly evolves and it’s better to use the latest version for your project as each one brings handy new features, better compiler integration and bug fixes.</p>
+
+<p class="message">
+If you're writing a library, it's better to stick to the lowest version of CMake that makes sense for you. You can find the version of CMake that is available for various distros <a href="https://repology.org/project/cmake/versions">here</a>. Another way of choosing is to look at other popular libraries and choose the same version.
+
+For example, <i class="fa fa-github"></i> <a href="https://github.com/nlohmann/json">JSON for modern C++</a> and <i class="fa fa-github"></i> <a href="https://github.com/fmtlib/fmt">fmt</a> use CMake 3.1. I'd recommend using something like CMake 3.8.2 or newer, unless you want to support very old distributions and users who don't want to upgrade to newer versions for some reason.
+</p>
+
+<p>After <code class="highlighter-rouge">cmake_minimum_required</code>, we have a project declaration:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">project</span><span class="p">(</span>example
+  LANGUAGES CXX
+  VERSION 1.0
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The project is similar to a concept of “solution” in Visual Studio terminology. One project can have multiple “targets” (which roughly correspond to “projects” in VS). The target can be an executable, a library or even something which doesn’t produce any files after it’s built (e.g. it can run unit tests, linters and so on).</p>
+
+<p class="message">For example, if you're making a game, you can have multiple targets - a game's main executable, the engine's library (which can be a static or a shared library), a level editor executable and so on. You don't need to make a new project for each of these targets - in most cases one project is enough.</p>
+
+<p><code class="highlighter-rouge">LANGUAGES</code> option in a <code class="highlighter-rouge">project</code> call defines a language which your project uses so that CMake knows what kind of builds to generate. By default it’s <code class="highlighter-rouge">C</code> and <code class="highlighter-rouge">CXX</code>, but there are a lot of other options available for you (like <code class="highlighter-rouge">CUDA</code> or <code class="highlighter-rouge">Fortran</code>). If you’re doing C or C++ project, it’s optional to specify it, but it’s still useful as a “meta-data” for people who’re reading your CMake build.</p>
+
+<p><code class="highlighter-rouge">VERSION</code> option specifies a current version of your project. It can be used to generate “version” headers (here’s an <a href="https://cmake.org/cmake/help/v3.20/guide/tutorial/index.html#adding-a-version-number-and-configured-header-file">example</a> of how to do it), write some output in a terminal and so on. I’ve seen a lot of people getting <code class="highlighter-rouge">VERSION</code> from a current Git tag or some changelog file, but we’ll not go here in this tutorial.</p>
+
+<p><code class="highlighter-rouge">add_subdirectory(&lt;DIR&gt;)</code> is like an “include” and can be thought of as an inclusion of <code class="highlighter-rouge">&lt;DIR&gt;/CMakeLists.txt</code> into another CMake file. It’s actually a bit more complex, but it’s okay to think about it as “include” at the beginning.</p>
+
+<p class="message">
+It's better to decompose CMake build files into smaller files so that you don't get one huge `CMakeLists.txt` which builds everything, but is several thousands lines long and hard to maintain.
+
+For example, if you have an <code>examples</code> directory, it's good to have a <code>examples/CMakeLists.txt</code> which will just be a bunch of <code>add_subdirectory</code> calls for each sub-directory and <code>example/some_example/CMakeLists.txt</code> will be a build script which contains information on how to build <code>some_example</code>.</p>
+
+<p>Here’s how <code class="highlighter-rouge">src/CMakeLists.txt</code> looks:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_executable</span><span class="p">(</span>example_exe main.cpp<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Yep, just one line. Here, we define our first target, <code class="highlighter-rouge">example_exe</code>.</p>
+
+<hr />
+
+<p>In the <code class="highlighter-rouge">add_executable</code> call, we can specify a list of sources needed to build your library or executable. For example, you can have:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_executable</span><span class="p">(</span>example_exe
+    Game.cpp
+    ResourceManager.cpp
+    main.cpp<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Another option is to use <code class="highlighter-rouge">target_sources</code>, which can be especially helpful if your target has .cpp files in several subdirectories, e.g.:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># in src/CMakeLists.txt</span>
+<span class="nb">add_executable</span><span class="p">(</span>example_exe<span class="p">)</span>
+<span class="nb">add_subdirectory</span><span class="p">(</span>subdir<span class="p">)</span>
+<span class="nf">target_sources</span><span class="p">(</span>example_exe PUBLIC main.cpp<span class="p">)</span>
+</code></pre></div></div>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># in src/subdir/CMakeLists.txt</span>
+<span class="nf">target_sources</span><span class="p">(</span>example_exe source.cpp<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Read <a href="https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/">this post</a> to learn more <code class="highlighter-rouge">target_sources</code>.</p>
+
+<hr />
+
+<p>Finally, our <code class="highlighter-rouge">main.cpp</code> looks like this:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Hello, world!</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now, let’s build this project.</p>
+
+<h2 id="building-a-project">Building a project</h2>
+
+<p>Create a “build directory”. This is a directory where all temporary CMake, build and object files will be. It’s also the directory in which your executables and libraries will be built (unless you tell CMake not to do so). Ideally, it should be outside of your “source” directory.</p>
+
+<p class="message">This concept is called "out-of-source" build and it's great. For example, you can easily switch between different commits in your "source" directory and still be able to retain your build results if you make a new "build" directory. Another advantage is that you can have a very minimal <code>.gitignore</code> file, because the build artifacts will all be outside of your repo's directory.</p>
+
+<p>So, suppose you have a structure like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake-example
+├── CMakeLists.txt
+└── src
+    ├── CMakeLists.txt
+    └── main.cpp
+cmake-example-build
+</code></pre></div></div>
+
+<p>When you’re in <code class="highlighter-rouge">cmake-example-build</code> directory (it’s empty at the moment), do this:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake ../cmake-example
+</code></pre></div></div>
+
+<p>This is the step where CMake does configuration (reading your CMake files, checking their validity, checking your compiler and so on) and generation of build files. If you’re on Windows and only have Visual Studio installed, CMake will generate Visual Studio solutions/projects by default. On Linux it’ll generate GNU Make <code class="highlighter-rouge">Makefile</code>s.</p>
+
+<p>To specify a generator, simply pass a <code class="highlighter-rouge">-G</code> option with a name of your generator, for example:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">-GNinja</span> ../cmake-example
+</code></pre></div></div>
+
+<p class="message"><a href="https://ninja-build.org/">ninja</a> is a great build tool. It's blazingly fast and I find that it performs better than GNU Make for me in most cases.</p>
+
+<p>Here’s an example output of configuration and generation if it goes right:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">--</span> The CXX compiler identification is GNU 9.3.0
+<span class="nt">--</span> Check <span class="k">for </span>working CXX compiler: /usr/bin/c++
+<span class="nt">--</span> Check <span class="k">for </span>working CXX compiler: /usr/bin/c++ <span class="nt">--</span> works
+<span class="nt">--</span> Detecting CXX compiler ABI info
+<span class="nt">--</span> Detecting CXX compiler ABI info - <span class="k">done</span>
+<span class="nt">--</span> Detecting CXX compile features
+<span class="nt">--</span> Detecting CXX compile features - <span class="k">done</span>
+<span class="nt">--</span> Configuring <span class="k">done</span>
+<span class="nt">--</span> Generating <span class="k">done</span>
+<span class="nt">--</span> Build files have been written to: ...
+</code></pre></div></div>
+
+<p>Finally, let’s build the project:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">--build</span> <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>You can also build a specific target if you run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">--build</span> <span class="nb">.</span> <span class="nt">--target</span> &lt;target_name&gt;
+</code></pre></div></div>
+
+<p>, for example:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">--build</span> <span class="nb">.</span> <span class="nt">--target</span> example_exe
+</code></pre></div></div>
+
+<p>You’ll find the executable in <code class="highlighter-rouge">&lt;your-build-dir&gt;/src/</code> directory or <code class="highlighter-rouge">&lt;your-build-dir&gt;/Debug/src</code> if you’re using Visual Studio to build the project.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>./src/example_exe
+Hello, world!
+</code></pre></div></div>
+
+<p class="message">If you've generated a Visual Studio solution, you can just use Visual Studio for building. It even checks if any CMakeLists.txt was modified and re-generates solution/project which changed. You'll see VS asking if it should reload the project which has changed - you should agree do it so that it works properly.</p>
+
+<p>If the target you’re building is a library, CMake will build a static one by default. To build a shared library, set <code class="highlighter-rouge">BUILD_SHARED_LIBS=ON</code> like this:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">-DBUILD_SHARED_LIBS</span><span class="o">=</span>ON &lt;source-dir&gt;
+</code></pre></div></div>
+
+<p>Some generators (Visual Studio and XCode) support building multiple configurations of your projects in one build directory. You can do it by specifying <code class="highlighter-rouge">--config</code> flag during the build like so:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">--build</span> <span class="nb">.</span> <span class="nt">--target</span> some_target <span class="nt">--config</span> Release
+</code></pre></div></div>
+
+<p>If in Ninja, GNU make and so on, your <code class="highlighter-rouge">example_exe</code> will be located in <code class="highlighter-rouge">&lt;build-dir&gt;/src/</code>, in Visual Studio it will be localted in <code class="highlighter-rouge">&lt;build-dir&gt;/src/&lt;config&gt;/</code> (e.g. <code class="highlighter-rouge">&lt;build-dir&gt;/src/Release</code>).</p>
+
+<p>For generators which don’t support multi-configuration builds in one build directory, you’ll have to make multiple build directories for each build type.</p>
+
+<h1 id="managing-dependencies">Managing dependencies</h1>
+
+<p>There are a lot of ways of managing dependencies with CMake, so let’s to a quick overview of possible ways.</p>
+
+<h2 id="manual-management">Manual management</h2>
+
+<p>The simplest way of doing dependency management is to simply copy source code of your dependencies into your project source directory. For example, you can just copy SFML sources to your <code class="highlighter-rouge">&lt;source-dir&gt;/dependencies/SFML</code> and then just do <code class="highlighter-rouge">add_subdirectory(dependencies/SFML)</code> in your main CMake file (and then link to SFML’s targets as needed)</p>
+
+<p>However, this is not the best way of doing it:</p>
+
+<ul>
+  <li>It might be hard to know which exact version the dependencies are.</li>
+  <li>You also don’t get a clear picture if you’ve modified the dependencies’ sources (e.g. to fix some problem or by mistake when you refactored something). Updating them is not fun then.</li>
+  <li>Your source directory might become huge if you have a lot of dependencies (and the repo size might increase dramatically as well).</li>
+</ul>
+
+<h2 id="git-submodules">Git submodules</h2>
+
+<p>Git submodules are basically pointers to other repositories. The pointer basically stores repo’s URL and the commit you choose to point at (e.g. commit of a specific library version).</p>
+
+<p>You can directly use <code class="highlighter-rouge">add_subdirectory(...)</code> with dependencies referenced via submodules, but you’ll need to check via CMake that dependencies were cloned, otherwise you’ll get errors about CMake not being able to find referenced subdirectories.</p>
+
+<p>You can read more about Git submodules <a href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">here</a>. I don’t use them myself, as I don’t like the git’s commands for their management and the metadata about your dependencies is not as clear as it could be.</p>
+
+<p>It also introduces a dependency on git and some people might have troubles trying to build your library because submodule management is not very user friendly.</p>
+
+<h2 id="package-managers">Package managers</h2>
+
+<p>There’s a bunch of package managers available for C++ right now: Conan, vcpkg and so on. They can be a great way of managing dependencies.</p>
+
+<p>I don’t like them for a few reasons.</p>
+
+<p>There’s no standard package manager in C++ world as of today, which leads to a fragmentation and build scripts not being available for all your dependencies. These build scripts are not supported by library maintainers most of the time, which leads to them to quickly becoming out of date with the latest version of the library or having some build features not being available to you.</p>
+
+<p>And finally, I like having few dependencies. I only need Git, a C++ compiler and CMake for building things I write.</p>
+
+<h2 id="fetchcontent">FetchContent</h2>
+
+<p>This is the way of managing dependencies that I personally use and like a lot. Basically, it allows you to download or clone source code of external projects from the Web (or other source) and then use this sources via <code class="highlighter-rouge">add_subdirectory</code> call and linking to dependency’s targets or other means.</p>
+
+<p>It’s a wrapper around <code class="highlighter-rouge">ExternalProject</code> CMake command, which can do a lot of things:</p>
+
+<ul>
+  <li>It can download or git clone other project sources</li>
+  <li>Configure and build them</li>
+  <li>Run some commands at various steps of build process</li>
+</ul>
+
+<p>A typical <code class="highlighter-rouge">ExternalProject</code> declaration looks like this:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">ExternalProject_Add</span><span class="p">(</span>foobar
+  GIT_REPOSITORY    git@github.com:FooCo/FooBar.git
+  GIT_TAG           origin/release/1.2.3
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The problem with it was that it did download at <strong>build</strong> time, which doesn’t allow you to link to your dependencies targets - you need to link to library files produced after the build like this:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">target_include_directories</span><span class="p">(</span>your_target PRIVATE &lt;path-to-foorbar-includes&gt;
+<span class="nb">target_link_libraries</span><span class="p">(</span>your_target PRIVATE &lt;path-to-a-build-foorbar-library&gt;<span class="p">)</span>
+</code></pre></div></div>
+
+<p>This wasn’t convenient, as a lot of dependencies build internals spilled into your build files and you needed to do a lot more work than simply linking to dependencies’ targets.</p>
+
+<p><code class="highlighter-rouge">FetchContent</code> solves that problem by downloading the dependency at <strong>configure</strong> time, which allows you to do this:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">FetchContent_Declare</span><span class="p">(</span>foobar
+  GIT_REPOSITORY    git@github.com:FooCo/FooBar.git
+  GIT_TAG           origin/release/1.2.3
+<span class="p">)</span>
+<span class="nf">FetchContent_MakeAvailable</span><span class="p">(</span>foobar<span class="p">)</span>
+
+<span class="c1"># somewhere later...</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span>your_target PRIVATE foobar_target<span class="p">)</span>
+</code></pre></div></div>
+
+<p>There are some downsides to using FetchContent, however:</p>
+
+<ul>
+  <li>Your initial configuration step might take a lot of time if you have a lot of dependencies, because some repos might take a lot of time to download (it can take minutes!). However, with <code class="highlighter-rouge">ExternalProject</code> you can get the same problem, but during the build process instead.</li>
+  <li>Some libraries might depend on other libraries being built and installed on the system. They will use <code class="highlighter-rouge">find_package</code> or <code class="highlighter-rouge">find_library</code> to find them and this might cause some problems for you. I’ll talk about it <a href="#find_package">find_package</a> section of this article in more detail.</li>
+</ul>
+
+<h1 id="adding-sfml-as-a-dependency">Adding SFML as a dependency</h1>
+
+<p>Create <code class="highlighter-rouge">depedencies/CMakeLists.txt</code> and <code class="highlighter-rouge">dependencies/sfml/CMakeLists.txt</code>. We have the following structure now:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.
+├── CMakeLists.txt
+├── dependencies
+│   ├── CMakeLists.txt
+│   └── sfml
+│       └── CMakeLists.txt
+└── src
+    ├── CMakeLists.txt
+    └── main.cpp
+</code></pre></div></div>
+
+<p class="message">I like naming dependencies and their directories in lowercase, because it allows me to not have to not think if the third-party dependency directory is named "openAL", "OpenAL" - it'll be just "openal". "ImGui-SFML" will be "imgui-sfml".</p>
+
+<p>First, let’s add <code class="highlighter-rouge">add_subdirectory(dependencies)</code> to our root <code class="highlighter-rouge">CMakeLists.txt</code>:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+
+<span class="nb">add_subdirectory</span><span class="p">(</span>dependencies<span class="p">)</span> <span class="c1"># add this</span>
+<span class="nb">add_subdirectory</span><span class="p">(</span>src<span class="p">)</span>
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">dependencies/CMakeLists.txt</code> looks like this:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">include</span><span class="p">(</span>FetchContent<span class="p">)</span>
+
+<span class="nf">FetchContent_Declare</span><span class="p">(</span>
+  sfml
+  GIT_REPOSITORY <span class="s2">"https://github.com/SFML/SFML"</span>
+  GIT_TAG 2f11710abc5aa478503a7ff3f9e654bd2078ebab <span class="c1"># 2.5.1</span>
+<span class="p">)</span>
+
+<span class="nb">add_subdirectory</span><span class="p">(</span>sfml<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Note that you can specify <code class="highlighter-rouge">GIT_TAG</code> by the name and not by the commit hash, but referencing by commit hash makes <code class="highlighter-rouge">FetchContent</code> quicker, because it doesn’t have to connect the remote to check if the tag hasn’t been modified.</p>
+
+<p>Next, <code class="highlighter-rouge">dependencies/sfml/CMakeLists.txt</code> (I’ll explain what goes on here a bit later):</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">message</span><span class="p">(</span>STATUS <span class="s2">"Fetching SFML..."</span><span class="p">)</span>
+
+<span class="c1"># No need to build audio and network modules</span>
+<span class="nb">set</span><span class="p">(</span>SFML_BUILD_AUDIO FALSE<span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span>SFML_BUILD_NETWORK FALSE<span class="p">)</span>
+
+<span class="nf">FetchContent_MakeAvailable</span><span class="p">(</span>sfml<span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">src/CMakeLists.txt</code> looks like this now:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">add_executable</span><span class="p">(</span>example_exe main.cpp<span class="p">)</span>
+<span class="nb">target_link_libraries</span><span class="p">(</span>example_exe PRIVATE sfml-graphics<span class="p">)</span>
+</code></pre></div></div>
+
+<p>And finally, let’s change our <code class="highlighter-rouge">src/main.cpp</code> to the following “SFML Hello world” code which is used in its many examples:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;SFML/Graphics.hpp&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span> <span class="n">window</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">VideoMode</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="s">"SFML works!"</span><span class="p">);</span>
+    <span class="n">sf</span><span class="o">::</span><span class="n">CircleShape</span> <span class="n">shape</span><span class="p">(</span><span class="mf">100.</span><span class="n">f</span><span class="p">);</span>
+    <span class="n">shape</span><span class="p">.</span><span class="n">setFillColor</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">Color</span><span class="o">::</span><span class="n">Green</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">isOpen</span><span class="p">())</span>
+    <span class="p">{</span>
+        <span class="n">sf</span><span class="o">::</span><span class="n">Event</span> <span class="n">event</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">pollEvent</span><span class="p">(</span><span class="n">event</span><span class="p">))</span>
+        <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sf</span><span class="o">::</span><span class="n">Event</span><span class="o">::</span><span class="n">Closed</span><span class="p">)</span>
+                <span class="n">window</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+        <span class="p">}</span>
+
+        <span class="n">window</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+        <span class="n">window</span><span class="p">.</span><span class="n">draw</span><span class="p">(</span><span class="n">shape</span><span class="p">);</span>
+        <span class="n">window</span><span class="p">.</span><span class="n">display</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If you’re building on Windows, run the generation step again and set <code class="highlighter-rouge">BUILD_SHARED_LIBS</code> to <code class="highlighter-rouge">OFF</code> so that SFML doesn’t make it <code class="highlighter-rouge">ON</code> causing issues with DLLs.</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake -DBUILD_SHARED_LIBS=OFF &lt;source-dir&gt;
+</code></pre></div></div>
+
+<p>More about this in <a href="#copying-dlls-on-windows">“Copying DLLs on Windows”</a> section.</p>
+
+<p>Now, let’s build the project:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">--build</span> <span class="nb">.</span>
+</code></pre></div></div>
+
+<p>A lot of the time can pass after “Fetching SFML…” message is displayed (even a minute or so).</p>
+
+<p>This is normal and can be caused by your Internet connection, GitHub being slow, or older versions of CMake where <code class="highlighter-rouge">FetchContent</code> is not as quick as it can be (the developers seem to be working on its speed, so try to use the oldest version of CMake).</p>
+
+<p>A lot of dependencies can be downloaded much quicker if you download a release zip instead, for example for SFML we can do this:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">FetchContent_Declare</span><span class="p">(</span>
+  sfml
+  URL https://github.com/SFML/SFML/archive/refs/tags/2.5.1.zip
+  URL_HASH 2c4438b3e5b2d81a6e626ecf72bf75be
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>It’s also a good idea to specify <code class="highlighter-rouge">URL_HASH</code> here to not download anything which you didn’t expect. You can usually find md5 hash or release in release notes or calculate it yourself using <code class="highlighter-rouge">md5sum</code>.</p>
+
+<p>Finally, run <code class="highlighter-rouge">src/example_exe</code> and you’ll see this:</p>
+
+<p><img src="/assets/cmake_article/sfml-simple.png" alt="Green circle on a black background" style="display:block; margin: 0 auto; width: 480px" /></p>
+
+<p>Now, let’s see what’s going on in <code class="highlighter-rouge">dependencies/sfml/CMakeLists.txt</code>.</p>
+
+<p>First of all, we have a message which just prints “Fetching SFML…”:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">message</span><span class="p">(</span><span class="s2">"Fetching SFML..."</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>You can also have it say where it will fetch SFML from, at which commit, which version, etc. Having something printed there is useful, because otherwise you’ll not be able to take which dependency takes a lot of time to download (or fails at configuration step). However, it will also print it every time you run a generation step, even if nothing will get downloaded. I think it’s not a big deal.</p>
+
+<p>Then, we have a couple of <code class="highlighter-rouge">set</code> calls which need to be done before <code class="highlighter-rouge">FetchContent_MakeAvailable</code>:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">set</span><span class="p">(</span>SFML_BUILD_AUDIO FALSE<span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span>SFML_BUILD_NETWORK FALSE<span class="p">)</span>
+</code></pre></div></div>
+
+<hr />
+
+<p>A lot of libraries allow you to modify their behaviour and build process by setting CMake variables. CMake has a complex way of how <code class="highlighter-rouge">option</code> and <code class="highlighter-rouge">set(... CACHE ...)</code> behave depending on if you have defined the variable or not. Sometimes a simple <code class="highlighter-rouge">set</code> is not enough and you’ll need to do a <code class="highlighter-rouge">set(... CACHE ...)</code> and even <code class="highlighter-rouge">set(... CACHE ... FORCE)</code> to stop dependency’s CMakeLists.txt from overwriting the variable you’re trying to set.</p>
+
+<p class="message">It's a good practice to take a look at what gets built by default in your dependencies and tell CMake to build only what you need from the dependency (some libraries can build examples, docs and tests by default, which you probably don't need).</p>
+
+<p>Finally, we call <code class="highlighter-rouge">FetchContent_MakeAvailable</code> which basically does some internal <code class="highlighter-rouge">FetchContent</code> variable and then calls <code class="highlighter-rouge">add_subdirectory</code> for the directory it has downloaded making dependency’s targets available to you.</p>
+
+<p class="message">
+The source files of SFML can now be found in <code>*build_dir*/_deps/sfml-src</code>, SFML's build directory and produced binaries can be found in <code>*build_dir*/_deps/sfml-build</code>.
+</p>
+
+<h1 id="adding-dear-imgui-and-imgui-sfml-as-dependencies">Adding Dear ImGui and ImGui-SFML as dependencies</h1>
+
+<p>Now, let’s look at something more complicated.</p>
+
+<p>I want to add <a href="https://github.com/eliasdaler/imgui-sfml">ImGui-SFML</a> as a dependency - it’s the library that allows you to easily integrate <a href="https://github.com/ocornut/imgui">Dear ImGui</a> and SFML. Let’s add Dear ImGui as a dependency first.</p>
+
+<p>Add this to <code class="highlighter-rouge">dependencies/CMakeLists.txt</code>:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">FetchContent_Declare</span><span class="p">(</span>
+  imgui
+  GIT_REPOSITORY https://github.com/ocornut/imgui
+  GIT_TAG 35b1148efb839381b84de9290d9caf0b66ad7d03
+<span class="p">)</span>
+
+<span class="nf">FetchContent_MakeAvailable</span><span class="p">(</span>imgui<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Dear ImGui doesn’t have a CMake build for the time of writing. We still need to call <code class="highlighter-rouge">FetchContent_MakeAvailable</code>, though, so that we get <code class="highlighter-rouge">imgui_SOURCE_DIR</code> variable set which we’ll use when setting up ImGui-SFML in a moment.</p>
+
+<p>Next, let’s add ImGui-SFML to <code class="highlighter-rouge">dependencies/CMakeLists.txt</code>:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">FetchContent_Declare</span><span class="p">(</span>
+  imgui-sfml
+  GIT_REPOSITORY https://github.com/eliasdaler/imgui-sfml
+  GIT_TAG 82dc2033e51b8323857c3ae1cf1f458b3a933c35
+<span class="p">)</span>
+<span class="nb">add_subdirectory</span><span class="p">(</span>imgui-sfml<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Next, we’ll create <code class="highlighter-rouge">dependency/imgui-sfml/CMakeLists.txt</code>, which looks like this:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">message</span><span class="p">(</span>STATUS <span class="s2">"Fetching ImGui-SFML..."</span><span class="p">)</span>
+
+<span class="nb">set</span><span class="p">(</span>IMGUI_DIR <span class="si">${</span><span class="nv">imgui_SOURCE_DIR</span><span class="si">}</span><span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span>IMGUI_SFML_FIND_SFML OFF<span class="p">)</span>
+<span class="nb">set</span><span class="p">(</span>IMGUI_SFML_IMGUI_DEMO ON<span class="p">)</span>
+
+<span class="nf">FetchContent_MakeAvailable</span><span class="p">(</span>imgui-sfml<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Nothing special - we need to set <code class="highlighter-rouge">IMGUI_DIR</code> to a place where Dear ImGui sources can be found and set <code class="highlighter-rouge">IMGUI_SFML_FIND_SFML</code> to <code class="highlighter-rouge">OFF</code> so that ImGui-SFML doesn’t attempt to call <code class="highlighter-rouge">find_package(SFML)</code> which will fail (more about that in <code class="highlighter-rouge">find_package</code> section a bit later).</p>
+
+<p>Note that <code class="highlighter-rouge">add_subdirectory(imgui-sfml)</code> should be place before <code class="highlighter-rouge">FetchContent_MakeAvailable(imgui)</code> call so that <code class="highlighter-rouge">imgui_SOURCE_DIR</code> gets defined.</p>
+
+<p>Next, let’s change the contents of <code class="highlighter-rouge">src/main.cpp</code> to the following:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;SFML/Graphics/RenderWindow.hpp&gt;
+#include &lt;SFML/System/Clock.hpp&gt;
+#include &lt;SFML/Window/Event.hpp&gt;
+</span>
+<span class="cp">#include &lt;imgui-SFML.h&gt;
+#include &lt;imgui.h&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">sf</span><span class="o">::</span><span class="n">RenderWindow</span> <span class="n">window</span><span class="p">(</span><span class="n">sf</span><span class="o">::</span><span class="n">VideoMode</span><span class="p">(</span><span class="mi">1280</span><span class="p">,</span> <span class="mi">720</span><span class="p">),</span> <span class="s">"ImGui + SFML = &lt;3"</span><span class="p">);</span>
+    <span class="n">window</span><span class="p">.</span><span class="n">setFramerateLimit</span><span class="p">(</span><span class="mi">60</span><span class="p">);</span>
+    <span class="n">ImGui</span><span class="o">::</span><span class="n">SFML</span><span class="o">::</span><span class="n">Init</span><span class="p">(</span><span class="n">window</span><span class="p">);</span>
+
+    <span class="n">sf</span><span class="o">::</span><span class="n">Clock</span> <span class="n">deltaClock</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">isOpen</span><span class="p">())</span> <span class="p">{</span>
+        <span class="n">sf</span><span class="o">::</span><span class="n">Event</span> <span class="n">event</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">window</span><span class="p">.</span><span class="n">pollEvent</span><span class="p">(</span><span class="n">event</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">ImGui</span><span class="o">::</span><span class="n">SFML</span><span class="o">::</span><span class="n">ProcessEvent</span><span class="p">(</span><span class="n">event</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">event</span><span class="p">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">sf</span><span class="o">::</span><span class="n">Event</span><span class="o">::</span><span class="n">Closed</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">window</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="n">ImGui</span><span class="o">::</span><span class="n">SFML</span><span class="o">::</span><span class="n">Update</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">deltaClock</span><span class="p">.</span><span class="n">restart</span><span class="p">());</span>
+
+        <span class="n">ImGui</span><span class="o">::</span><span class="n">ShowDemoWindow</span><span class="p">();</span>
+
+        <span class="n">window</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+        <span class="n">ImGui</span><span class="o">::</span><span class="n">SFML</span><span class="o">::</span><span class="n">Render</span><span class="p">(</span><span class="n">window</span><span class="p">);</span>
+        <span class="n">window</span><span class="p">.</span><span class="n">display</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="n">ImGui</span><span class="o">::</span><span class="n">SFML</span><span class="o">::</span><span class="n">Shutdown</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This is a “hello world” of ImGui-SFML - it calls all the necessary functions for ImGui-SFML to do its thing and calls <code class="highlighter-rouge">ImGui::ShowDemoWindow</code> which is a great way to see how many things Dear ImGui can do.</p>
+
+<p>Finally, we change <code class="highlighter-rouge">target_link_libraries</code> call in <code class="highlighter-rouge">src/CMakeLists.txt</code> to the following:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">target_link_libraries</span><span class="p">(</span>example_exe PRIVATE ImGui-SFML::ImGui-SFML<span class="p">)</span>
+</code></pre></div></div>
+
+<p>Yep, that’s it! Notice that the implicit linking to the <code class="highlighter-rouge">sfml-graphics</code> is gone - ImGui-SFML links to it in its build files, so now you don’t need to link to SFML directly.</p>
+
+<p>Finally, let’s build our program and you’ll see something like this (I opened a few menus to make the screenshot more interesting).</p>
+
+<p><img src="/assets/cmake_article/imgui-sfml.png" alt="ImGui-SFML with bunch of menus and examples open" style="display:block; margin: 0 auto; width: 720px" /></p>
+
+<h1 id="speeding-up-your-builds">Speeding up your builds</h1>
+
+<p>Of course, having to rebuild dependencies from scratch can take a lot of time. There’s a simple solution to that: <a href="https://github.com/ccache/ccache">ccache</a>. This amazing program will cache all the object files you build and then instead of compiling the same source file from scratch over and over, it’ll just use the cached object file instead of doing compilation.</p>
+
+<p>It works with Clang and GCC and a couple of other compilers. MSVC is not supported, unfortunately.</p>
+
+<p>To use it, simply install it somewhere on your system and then do this on CMake configuration step:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake ... <span class="nt">--DCMAKE_CXX_COMPILER_LAUNCHER</span><span class="o">=</span>ccache ...
+</code></pre></div></div>
+
+<p>You can also add this to your CMake builds to not have to set <code class="highlighter-rouge">CMAKE_CXX_COMPILER_LAUNCHER</code> manually every time:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">find_program</span><span class="p">(</span>CCACHE_FOUND ccache<span class="p">)</span>
+<span class="nb">if</span><span class="p">(</span>CCACHE_FOUND<span class="p">)</span>
+  <span class="nb">set_property</span><span class="p">(</span>GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache<span class="p">)</span>
+<span class="nb">endif</span><span class="p">(</span>CCACHE_FOUND<span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="using-fetchcontent-with-local-source-directories">Using FetchContent with local source directories</h1>
+
+<p>Sometimes it can be useful to download sources for dependencies and have FetchContent use them instead of fetching them from the Web. This can be needed for a few reasons:</p>
+
+<ul>
+  <li>You don’t want to download sources again and again when you remove your build directories</li>
+  <li>You’re going somewhere where Internet connection is poor or not available</li>
+  <li>You want to do some source changes and see how the dependency will behave with them.</li>
+</ul>
+
+<p>This is easy to do. Just set <code class="highlighter-rouge">FETCHCONTENT_SOURCE_DIR_&lt;lib&gt;</code> to your dependency source dir and you’re done, for example:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cmake <span class="nt">-DFETCHCOUNTENT_SOURCE_DIR_SFML</span><span class="o">=</span>&lt;sfml-dir&gt; &lt;main-project-source-dir&gt;
+</code></pre></div></div>
+
+<p>Note that even if your library is named <code class="highlighter-rouge">sfml</code> in CMake, you’ll need to set <code class="highlighter-rouge">FETCHCONTENT_SOURCE_DIR_SFML</code> and not <code class="highlighter-rouge">FETCHCONTENT_SOURCE_DIR_sfml</code>.</p>
+
+<h1 id="some-notes-about-libraries-which-dont-behave-well">Some notes about libraries which don’t behave well</h1>
+
+<p>In the example I’ve showed you, everything went pretty well. In most cases it won’t - you’ll spend a lot more time trying to get the library to work with your project, so let’s look at some common cases.</p>
+
+<h2 id="missing-or-poorly-written-cmake-build">Missing or poorly written CMake build</h2>
+
+<p>Not all libraries are built with CMake, Dear ImGui and Lua being examples. In some cases, there’s a CMake build, but it can be outdated or written in older CMake which makes build targets essentially useless (e.g. instead of <code class="highlighter-rouge">target_include_libraries</code> which carry transitive include directory dependencies, the library can use <code class="highlighter-rouge">include_directories</code> which will force you to manually specify include directories and other things for the library you link to).</p>
+
+<p>There are several ways of handling this:</p>
+
+<ul>
+  <li>The best, but most complicated way is to fork the project, fix the CMake build and submit a PR. Until the PR is merged, you point <code class="highlighter-rouge">FetchContent</code> to the branch of your fork and wait. It’s difficult, but it helps a lot of people in the future. I’ve done it myself and noticed that CMake builds of the libraries I use (SDL, for example) have improved gradually over the years thanks to other people’s contributions</li>
+  <li>Use some “alternative” CMake build/fork of a library. For example, for Lua I use <a href="https://github.com/LuaDist/lua">this repo</a> and for GLEW, I use <a href="https://github.com/Perlmint/glew-cmake">this one</a>.</li>
+  <li>You can use <code class="highlighter-rouge">FetchContent</code> for getting source code of the library and then write the needed CMake build code from scratch as I’ve done in <a href="https://github.com/eliasdaler/imgui-fetchcontent">this example</a> of using Dear ImGui with SDL with FetchContent.</li>
+</ul>
+
+<h2 id="build_shared_libs">BUILD_SHARED_LIBS</h2>
+
+<p>A lot of libraries tend to ignore <code class="highlighter-rouge">BUILD_SHARED_LIBS</code> and either build shared libraries by default or build both static and shared library unless you tell it not to do that. You’ll probably need to look at your dependency’s <code class="highlighter-rouge">CMakeList.txt</code> to understand how to build a static or shared library depending on your needs.</p>
+
+<p>In SFML’s case, if you don’t set <code class="highlighter-rouge">BUILD_SHARED_LIBS</code> to <code class="highlighter-rouge">OFF</code>, it’ll just build shared libraries, which is a bit frustrating. To fix this, you’ll need to set <code class="highlighter-rouge">BUILD_SHARED_LIBS</code> to <code class="highlighter-rouge">OFF</code> if you need to build SFML as static libraries.</p>
+
+<h2 id="copying-dlls-on-windows">Copying DLLs on Windows</h2>
+
+<p>If you’re using dynamic linking when building on Windows, you’ll need to copy DLLs to the directory where your executable is built, so that it can find them. This can be done by adding the following:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Copy DLLs needed for runtime on Windows</span>
+<span class="nb">if</span><span class="p">(</span>WIN32<span class="p">)</span>
+  <span class="nb">if</span> <span class="p">(</span>BUILD_SHARED_LIBS<span class="p">)</span>
+    <span class="nb">add_custom_command</span><span class="p">(</span>TARGET example_exe POST_BUILD
+      COMMAND <span class="si">${</span><span class="nv">CMAKE_COMMAND</span><span class="si">}</span> -E copy_if_different
+          $&lt;TARGET_FILE:ImGui-SFML::ImGui-SFML&gt;
+          $&lt;TARGET_FILE:sfml-graphics&gt;
+          $&lt;TARGET_FILE:sfml-window&gt;
+          $&lt;TARGET_FILE:sfml-system&gt;
+          $&lt;TARGET_FILE_DIR:example_exe&gt;<span class="p">)</span>
+  <span class="nb">endif</span><span class="p">()</span>
+<span class="nb">endif</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Basically, CMake will take build artifacts of <code class="highlighter-rouge">ImGui-SFML</code>, <code class="highlighter-rouge">sfml-graphics</code>, <code class="highlighter-rouge">sfml-window</code> and <code class="highlighter-rouge">sfml-system</code> targets (DLLs) and copy them to the directory where executable <code class="highlighter-rouge">example_exe</code> will be built. Note that this is only done when you’re building your project, not installing it (when you run <code class="highlighter-rouge">cmake --build . --target install</code>). For that, you’ll need to add similar install steps to your build script.</p>
+
+<h2 id="find_package">find_package</h2>
+
+<p>If your dependency depends on other dependencies and uses <code class="highlighter-rouge">find_package</code> to find them, this can lead to a lot of problems, because in some cases, <code class="highlighter-rouge">find_package</code> tries to find built library files and does it in system directories. If you don’t have this library built or installed system-wide, <code class="highlighter-rouge">find_package</code> will fail, even though you build the dependency of dependency yourself. This issue is still not solved and discussion about it can be found <a href="https://gitlab.kitware.com/cmake/cmake/-/issues/17735">here</a>.</p>
+
+<p>To handle this, make a PR or ask a library maintainer to add an option to skip <code class="highlighter-rouge">find_package</code> call if some option like <code class="highlighter-rouge">XXX_FIND_Y</code> is set to <code class="highlighter-rouge">FALSE</code>. For example, ImGui-SFML will not call <code class="highlighter-rouge">find_package(SFML)</code> if <code class="highlighter-rouge">IMGUI_SFML_FIND_SFML</code> is set to <code class="highlighter-rouge">FALSE</code>. Another way to make your library more friendly is to check if the targets you want to link to are already present, for example:</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">if</span> <span class="p">(</span>NOT TARGET &lt;target_of_dependency&gt;<span class="p">)</span>
+  <span class="nb">find_package</span><span class="p">(</span>&lt;dependency&gt;<span class="p">)</span>
+<span class="nb">endif</span><span class="p">()</span>
+
+...
+
+<span class="nb">target_link_libraries</span><span class="p">(</span>&lt;target&gt; PUBLIC &lt;target_of_dependency&gt;<span class="p">)</span>
+</code></pre></div></div>
+
+<p>I did this to fix SDL_image not behaving well with its dependency on SDL which can be seen in <a href="https://github.com/libsdl-org/SDL_image/pull/170">this PR</a>.</p>
+
+<p>If you can’t do that for some reason, you’ll have to use <code class="highlighter-rouge">ExternalProject</code>. For example, if libA depends on libB and uses <code class="highlighter-rouge">find_package</code> to find libB, then you need to to build and install <code class="highlighter-rouge">libB</code> first via <code class="highlighter-rouge">ExternalProject</code> and only then build <code class="highlighter-rouge">libA</code>’s so that <code class="highlighter-rouge">find_package(libB)</code> succeeds. This is very complicated, which makes the first solution (modifying the CMakeLists.txt which calls <code class="highlighter-rouge">find_package</code> via any means) much easier in practice.</p>
+
+<h1 id="closing-thoughts">Closing thoughts</h1>
+
+<p>CMake is quite complex, and I think I only scratched the surface of how to manage a CMake project and its dependencies. However, I hope that you’ve found this article useful and it’ll be a good step to get you started and make your builds easier to manage.</p>
+
+<p>Here are some recommended CMake resources to help you further:</p>
+
+<ul>
+  <li><a href="https://crascit.com/professional-cmake/">Professional CMake: A Practical Guide</a> by Craig Scott. The best and most up-to-date book about CMake. It will teach you most of the things you’ll ever need from CMake. I use it as a CMake reference all the time.</li>
+  <li><a href="https://cmake.org/cmake/help/v3.20/guide/tutorial/index.html">CMake tutorial</a> and <a href="https://cmake.org/cmake/help/v3.20/manual/cmake-buildsystem.7.html">cmake-buildsystem(7)</a> - nice overview of main CMake things and main CMake concepts in general</li>
+  <li><a href="https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/">“It’s time to do CMake Right”</a> <a href="https://web.archive.org/web/20210415182304/https://pabloariasal.github.io/2018/02/19/its-time-to-do-cmake-right/">(archive)</a> by Pablo Arias. A fantastic article about writing CMake for libraries meant to be used for other people and easy to include as a dependency in other projects.</li>
+  <li><a href="https://www.youtube.com/watch?v=eC9-iRN2b04">“Using Modern CMake Patterns to Enforce a Good Modular Design”</a> by Mathieu Ropert. A very nice talk about writing good CMake scripts.</li>
+</ul>
+
+    <hr />
+    <p>Follow me on twitter <a href="https://twitter.com/EliasDaler">@EliasDaler</a> to not miss the new stuff!</p>
+  </div>
+
+</article>
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    /*
+    var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        
+        s.src = '//eliasdaler-github-io.disqus.com/embed.js';
+        
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+
+    <script>
+      (function(document) {
+        var toggle = document.querySelector('.sidebar-toggle');
+        var sidebar = document.querySelector('#sidebar');
+        var checkbox = document.querySelector('#sidebar-checkbox');
+
+        document.addEventListener('click', function(e) {
+          var target = e.target;
+
+          if(!checkbox.checked ||
+             sidebar.contains(target) ||
+             (target === checkbox || target === toggle)) return;
+
+          checkbox.checked = false;
+        }, false);
+      })(document);
+    </script>
+
+  </body>
+</html>
