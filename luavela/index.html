@@ -1,0 +1,127 @@
+<!doctype html><html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><link rel="shortcut icon" href=https://eliasdaler.github.io/favicon.ico><link rel=stylesheet href=/css/style.min.css><link rel=alternate type=application/rss+xml href=https://eliasdaler.github.io/feed.xml title="Elias Daler's blog"><title>LuaVela - the LuaJIT fork I've worked on</title></head><body><header id=banner><h2><a href=https://eliasdaler.github.io>Elias Daler's blog</a></h2><nav><ul></ul></nav></header><main id=content><article><header id=post-header><h1>LuaVela - the LuaJIT fork I've worked on</h1><div>Publication date: <time>October 15, 2019</time></div><div></div></header><p>Recently, IPONWEB open sourced its fork of LuaJIT called
+<a href=https://github.com/iponweb/luavela>LuaVela</a>. The original announcement post
+can be found <a href=http://lua-users.org/lists/lua-l/2019-08/msg00041.html>here</a>
+where a lot of details about it can be found. For those who don&rsquo;t know - my real
+name is Ilya Daylidyonok, and I&rsquo;m mentioned in the announcement!</p><p>I&rsquo;ve worked on LuaVela for the last 7 months and now I want to tell about my
+experience.</p><div><h2>Table Of Contents</h2><nav id=TableOfContents><ul><li><a href=#intro>Intro</a></li><li><a href=#luajits-2gb-problem>LuaJIT&rsquo;s 2GB problem</a></li><li><a href=#forking-luajit>Forking LuaJIT</a></li><li><a href=#what-ive-found-interesting-about-luajit>What I&rsquo;ve found interesting about LuaJIT</a></li><li><a href=#luavelas-new-features>LuaVela&rsquo;s new features</a></li><li><a href=#my-contributions-to-luavela>My contributions to LuaVela</a></li><li><a href=#future>Future</a></li></ul></nav></div><h2 id=intro>Intro</h2><p>Lua has been dear for me for a long time. It&rsquo;s an amazing language. It&rsquo;s easy to
+integrate it with C++, it&rsquo;s fast, and it&rsquo;s a joy to write code with it. I&rsquo;ve
+used it in my games and other projects for the last 6 years, so it&rsquo;s my &ldquo;mother
+tongue&rdquo; as much as C++ at this point.</p><p>Another thing that makes Lua dear to me is that <a href=https://eliasdaler.wordpress.com/tag/tutorial/>the
+articles</a> I&rsquo;ve written about it
+were received very well and this has given me a lot of motivation to write more.
+If you Google &ldquo;Lua C++&rdquo;, you&rsquo;ll see my blog somewhere on the first page (maybe
+it&rsquo;ll even be the first result!). That&rsquo;s how popular the articles have gotten.</p><p>I&rsquo;ve been fascinated by compilers for a long time, and I&rsquo;ve always wanted to do
+some work in that field. And this became possible when I&rsquo;ve started working at
+IPONWEB.</p><h2 id=luajits-2gb-problem>LuaJIT&rsquo;s 2GB problem</h2><p>You don&rsquo;t usually stumble upon companies working on their own compilers (or even
+forks of them). One of the reasons IPONWEB choose to do so, is that it hit
+(in)famous limitation of LuaJIT: its 2GB RAM limit.</p><p>LuaJIT was originally written with 32 bit architecture/pointers in mind. When
+you ran it on 64 bit platforms, you had a limitation: you could only adress 1GB
+of RAM (because of mmap limitations), so this was LuaJIT&rsquo;s memory limit. In
+newer Linux kernels the limit was raised to 2GB, but it still wasn&rsquo;t enough for
+some projects IPONWEB did. This became a serious problem by 2015. LuaJIT 2.1
+wasn&rsquo;t stable enough for production use at this point, and other possible
+solutions to the problem the problem just weren&rsquo;t good enough. People at IPONWEB
+decided to fork LuaJIT.</p><h2 id=forking-luajit>Forking LuaJIT</h2><p>Lua community is one of the most segmented communities I&rsquo;ve ever seen. LuaJIT
+can be partially blamed for that. A lot of people stayed somewhere between Lua
+5.1 and Lua 5.2 because they used LuaJIT. LuaJIT got huge performance gains
+for them, so migrating to Lua 5.2 and Lua 5.3 was not possible.</p><p>LuaJIT also has a lot forks. People add optimizations which work well for them,
+but don&rsquo;t work that well in general case. People fix bugs, which can&rsquo;t be easily
+ported to upstream, because of its cross-platform support and very high
+standards to which patches must conform (which are justified!).</p><p>When LuaVela (called uJIT internally until the release) became yet another fork,
+people who started it wanted for it to conform to the standard (vanilla) Lua as
+much as possible. A lot of tests were added to ensure standard conformance.
+LuaVela is a &ldquo;drop-in&rdquo; replacement for Lua 5.1 and LuaJIT. It&rsquo;s likely that if
+you replace your Lua/LuaJIT headers in your code, you&rsquo;ll just get LuaVela to
+work with your code and might see performance benifits immediately.</p><p>Another thing that was done early on was dropping cross-platform support. We
+used LuaVela for projects which ran on x86-64 Linux only and it was difficult
+for our small team to try to support all the other platforms.</p><h2 id=what-ive-found-interesting-about-luajit>What I&rsquo;ve found interesting about LuaJIT</h2><p>During my first days at IPONWEB, I&rsquo;ve started digging into LuaVela&rsquo;s and
+LuaJIT&rsquo;s codebase. There is an in-depth
+<a href=http://lua-users.org/lists/lua-l/2009-11/msg00089.html>e-mail</a> by Mike Pall
+(the author of LuaJIT) which explains some of the stuff about how LuaJIT works
+and why it is so fast and good at generating assembly. I&rsquo;ll go over a few things
+I&rsquo;ve found fascinating about LuaJIT&rsquo;s implementation.</p><p>First of all, LuaJIT&rsquo;s interpreter is written in assembly (in
+<a href=https://luajit.org/dynasm.html>DynASM</a>, to be precise) and <a href=http://luajit.org/performance_x86.html>it can perform
+faster</a> than vanilla Lua 5.1 in 2-4
+times. One of the reasons for that are some incredible performance optimizations
+that were done in handcrafted assembly to reduce the number of RAM lookups and
+stores. A lot of the computations are done using CPU registers - most of the
+time you have function&rsquo;s parameters and local variables stored in CPU registers
+and so a lot of computations are done without accessing the RAM. There are also
+some optimizations (like expression folding) which are done at script&rsquo;s initial
+convertion to bytecode (when your module is loaded by Lua).</p><p>Another cool thing is that LuaJIT and C share the same stack and LuaJIT honors
+C ABI to do function calls. This is one of the reason why Lua/C calls are so
+cheap there - they&rsquo;re almost identical to C function calls.</p><p>LuaJIT&rsquo;s interpreter is written in DynASM, a higher level assembly, which allows
+you to write &ldquo;macros&rdquo;, have constants and other things to make your assembly
+writing process faster, safer and easier to read. You can find LuaVela&rsquo;s
+improved interpreter
+<a href=https://github.com/iponweb/luavela/blob/master/src/vm_x86.dasc>here</a>. A lot
+was done to refactor and document <a href=https://github.com/LuaJIT/LuaJIT/blob/v2.1/src/vm_x86.dasc>original LuaJIT&rsquo;s
+interpreter</a>, so I
+think that it&rsquo;s a useful learning resource even if you don&rsquo;t plan to use LuaVela
+in your project.</p><p>When it comes to JIT/compilation part, LuaJIT shines again - it uses a huge
+number of optimizations to make generated assembly fast. It generates linear
+&ldquo;traces&rdquo; - assembly without branches and jumps. The only jumps that are
+there are <em>exit conditions</em>: you compile a trace using some invariants and
+assumptions, e.g. that some variable should stay constant or have a certain
+type. When this assumption gets broken, you <em>exit</em> the trace, and either find
+another trace or just continue execution in the interpreter.</p><p>All function calls in a trace are inlined - this one also gives a considerable
+performance boost. There is also a huge number of &ldquo;fold&rdquo; optimizations which
+transform things like <code>2 + 2 + x + x</code> into <code>4 + 2*x</code> (even function calls,
+especially to math functions can be folded sometimes!).</p><p>There are also built-ins like <code>string.find</code> or <code>math.abs</code> which are either
+written in C/asm, or are written as C functions which tell LuaJIT which IRs to
+emit, so you get very efficient assembly as the result of a final trace
+generation.</p><p>For example, calling <code>math.abs</code> essentially turns into few instructions in a
+trace. There&rsquo;s no table lookup into <code>math</code> table, there&rsquo;s even no call to C&rsquo;s
+<code>abs</code> function!</p><p>LuaJIT&rsquo;s IR is linear: it&rsquo;s laid out contiguously in memory. It&rsquo;s one of the
+reasons why optimizations and code generation happen quickly and don&rsquo;t have
+noticeable performance overhead in most cases.</p><h2 id=luavelas-new-features>LuaVela&rsquo;s new features</h2><p>What makes LuaVela different from other LuaJIT forks? I&rsquo;ll quote the <a href=http://lua-users.org/lists/lua-l/2019-08/msg00041.html>original
+announcement post</a>:</p><ul><li>Full support for 64-bit memory without any tricks or hacks in the
+interpreter and JIT compiler;</li><li>&ldquo;Sealing&rdquo;: An ability to hide some data from the garbage collector.
+In IPONWEB, we use this generation-like (or, better, Eden-like) trick
+to mark data with the same lifetime as the application instance itself
+reducing overall pressure on GC;</li><li>Immutability: Data structures may be (recursively) marked immutable
+in run-time. This implemented via an extension API, the syntax of the
+language is unaffected;</li><li>Coroutine timeouts: There are C-level extension APIs that allow to
+control the life time of coroutines – once a coroutine runs for too
+long, it is terminated by the virtual machine;</li><li>Some new optimizations in the JIT compiler (but some of them are not
+brand new if one compares with LuaJIT 2.1);</li><li>New C- and Lua-level extension APIs;</li><li>Platform-level sampling profiler;</li><li>Memory usage profiler;</li><li>Platform-level code coverage.</li><li>CMake is used as a build system for the project;</li><li>6 test suites are bundled with the project: Lua 5.1 test suite,
+LuaJIT test suite, CERN MAD test suite (partially), lua-Harness test
+suite and two suites written inside IPONWEB (for testing at Lua- and
+C-level, respectively);</li><li>Documentation bundle is included into the release, too. All the docs
+are in the RST format and <code>make docs</code> will build you the HTML version
+if you have Sphinx installed.</li></ul><h2 id=my-contributions-to-luavela>My contributions to LuaVela</h2><p>Here&rsquo;s some of the stuff I did in the 7 months that I&rsquo;ve worked on LuaVela:</p><ul><li>Added <code>ujit.table.size</code> built-in for counting non-nil elements in a Lua table (both array and hash parts)</li><li>Created <code>ujit.math</code> module which is used to test if number is finite, +-ifn or NaN (in <a href=https://en.wikipedia.org/wiki/IEEE_754-1985>IEEE-754</a> terms)</li><li>Implemented <code>ujit.string.trim</code> and <code>ujit.string.split</code> built-ins - the first one removes whitespace from both ends of the string, and another allows you to iterate over strings like this:</li></ul><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-lua data-lang=lua><span style=display:flex><span><span style=font-weight:700>local</span> t <span style=font-weight:700>=</span> {}
+</span></span><span style=display:flex><span><span style=font-weight:700>for</span> token <span style=font-weight:700>in</span> ujit.string.split(<span style=color:#b84>&#34;a,b,c&#34;</span>, <span style=color:#b84>&#34;,&#34;</span>) <span style=font-weight:700>do</span>
+</span></span><span style=display:flex><span>    table.insert(t)
+</span></span><span style=display:flex><span><span style=font-weight:700>end</span>
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>-- t == { &#34;a&#34;, &#34;b&#34;, &#34;c&#34; }</span>
+</span></span></code></pre></div><ul><li>Improved byte code dumping. LuaJIT and LuaVela have &ldquo;-b&rdquo; flag used for
+printing byte code of a Lua chunk. I&rsquo;ve figured out that you can actually do
+something close to gdb&rsquo;s <code>disas /s</code> with it (when source code lines are printed next to corresponding assembly). The resulting flag &ldquo;-B&rdquo; does this:</li></ul><figure><img src=bytecode.png></figure><ul><li>Improved testing system and helped make it more consistent across different testing suites.</li><li>Migrated repo from hg to Git. I used
+<a href=https://github.com/frej/fast-export>hg-fast-export</a> for this, but it wasn&rsquo;t
+simple as that. Initially uJIT started inside another repo, and so the history
+was full of empty commits when the transfer to another repository happened.
+Also &ldquo;closing branch&rdquo; commits from hg were adding a lot of noise. I&rsquo;ve written a Python script which iterated over the entire history and rewrote it while excluding empty commits and saving authorship, time of commit and feature branches from HG repo.</li><li>Made tons of CMake improvements - the most significant was adding support for
+out of source build and testing. Another cool thing was migrating to
+<code>ExternalProject</code> for third party libraries, which made the build process a
+lot cleaner. I also introduced some modern CMake practices in our build scripts, which made everyone&rsquo;s lives a bit easier.</li><li>Fixed non-conformant code to enable <code>-std=c11</code> and <code>-pedantic</code>. LuaJIT used
+something close to GNU 99 standard for everything, but didn&rsquo;t really specify
+the standard. It turned out that GCC is using <code>-std=gnu11</code> by default since
+GCC 5, so we&rsquo;ve decided to fix all non-conforming code. Some interesting changes:<ul><li><code>-std=gnu11</code> allows you to forward declare enums, ISO C doesn&rsquo;t</li><li>You need to explicitly cast pointers to <code>void*</code> before printing them with
+<code>printf</code>, e.g.:</li></ul></li></ul><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=font-weight:700>struct</span> some_type<span style=font-weight:700>*</span> ptr <span style=font-weight:700>=</span> <span style=font-weight:700>&amp;</span>some_obj;
+</span></span><span style=display:flex><span>printf(<span style=color:#b84>&#34;pointer: %p&#34;</span>, (<span style=color:#458;font-weight:700>void</span><span style=font-weight:700>*</span>)ptr);
+</span></span><span style=display:flex><span><span style=color:#998;font-style:italic>//                    ^^^^^^^
+</span></span></span></code></pre></div><ul><li>Casting a function pointer to <code>void*</code> is not allowed by C standard, but this is okay to do on Linux, and LuaJIT uses it often for storing callbacks, and dlsym returns void*, so I had to disable -pedantic for lines that do so.</li><li><code>##__VA_ARGS__</code> is not in ISO C, which is painful, because if you have a macro with variadic arguments, you can&rsquo;t pass &ldquo;nothing&rdquo; in such macros</li><li>enum values must be initialized with integer constant expressions, but
+LuaJIT used <code>uint32_t</code> for <code>x86Op</code> <code>enum</code></li><li>expressions like these are permitted in GNU C, but not in ISO C:</li></ul><div class=highlight><pre tabindex=0 style=background-color:#fff;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c data-lang=c><span style=display:flex><span><span style=color:#458;font-weight:700>void</span> <span style=color:#900;font-weight:700>f</span>() {
+</span></span><span style=display:flex><span>    <span style=font-weight:700>return</span> g();
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>Implemented a process of mirroring patches from internal repo to a public one.
+We have some internal docs and other secret stuff in the private repo, so I&rsquo;ve
+made a script which excludes changes to these files</li><li>I&rsquo;ve also done a lot of clean up for the code base in general to make
+sure that when we open source the project, it looks as good as possible.</li></ul><h2 id=future>Future</h2><p>At the moment, the development of LuaVela is finished. We&rsquo;ll fix critical bugs,
+but we felt that LuaVela is close to being feature complete and fast enough for
+most of our use cases, so we&rsquo;ve moved on to other projects. LuaVela was open
+sourced as a &ldquo;thank you&rdquo; for Lua and LuaJIT community and developers. I hope
+that some of the unique things LuaVela has will be later ported to other active
+forks and make the software which uses it even faster and better.</p><p>I&rsquo;ve enjoyed working on LuaVela: I&rsquo;ve learned a lot about Lua and JIT
+compilation. I&rsquo;ve also got some real life C programming experience. It was
+great.</p><p>Thanks for reading!</p></article></main><footer id=footer>© 2022 Elias Daler. All rights reserved.<p>subscribe via <a href=https://eliasdaler.github.io/feed.xml>RSS</a></p></footer></body></html>
