@@ -5,7 +5,7 @@ draft: false
 tags: [Tutorial, SFML, ImGui, C++]
 ---
 
-Related article: [Using ImGui with modern C++ and STL]({{< ref "/using-imgui-with-sfml-pt-2" >}})
+Related article: [Using ImGui with modern C++ and STL]({{< ref "/using-imgui-with-sfml-pt2" >}})
 
 ___
 

@@ -5,7 +5,7 @@ lastmod: 2021-01-12T23:40:00+30:00
 draft: false
 ---
 
-Related article: [Using Dear ImGui with SFML for creating awesome game dev tools]({{< ref "/using-imgui-with-sfml-pt-1" >}})
+Related article: [Using Dear ImGui with SFML for creating awesome game dev tools]({{< ref "/using-imgui-with-sfml-pt1" >}})
 
 ---
 
