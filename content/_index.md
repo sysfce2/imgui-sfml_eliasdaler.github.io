@@ -12,7 +12,8 @@ I'm also writing Go professionally and doing gamedev with [Ebiten](https://ebite
 
 ___
 
-* e-mail: [eliasdaler@yandex.ru](mailto:eliasdaler@yandex.ru) (best way to contact me)
+* e-mail: [eliasdaler@protonmail.com](mailto:eliasdaler@protonmail.com) (best way to contact me)
+* Mastodon: [@eliasdaler@mastodon.gamedev.place](https://mastodon.gamedev.place/@eliasdaler)
 * Twitter: [@EliasDaler](https://twitter.com/EliasDaler)
 * GitHub: [eliasdaler](https://github.com/eliasdaler)
 
