@@ -221,7 +221,7 @@ For generators which don't support multi-configuration builds in one build direc
 
 ## Managing dependencies
 
-There are a lot of ways of managing dependencies with CMake, so let's to a quick overview of possible ways.
+There are a lot of ways of managing dependencies with CMake, so let's do a quick overview of possible ways.
 
 ### Manual management
 
